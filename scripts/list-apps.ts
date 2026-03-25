@@ -77,7 +77,7 @@ function main() {
     process.exit(0);
   }
 
-  console.log(`\n  HrFlow App Store — ${apps.length} app(s)\n`);
+  console.log(`\n  HrFlow.ai App Store — ${apps.length} app(s)\n`);
   console.log(
     "  " +
       "Folder".padEnd(35) +

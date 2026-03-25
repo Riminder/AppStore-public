@@ -5,7 +5,7 @@
   "engines": {
     "node": ">=20"
   },
-  "description": "HrFlow Hackathon App Store — A catalog of AI-powered HR apps built by hackathon teams.",
+  "description": "HrFlow.ai Hackathon App Store — A catalog of AI-powered HR apps built by hackathon teams.",
   "scripts": {
     "validate": "tsx scripts/validate-apps.ts",
     "list": "tsx scripts/list-apps.ts"

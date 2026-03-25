@@ -194,7 +194,7 @@ function scanForSecrets(folder: string): string[] {
 }
 
 function main() {
-  console.log("=== HrFlow App Store Validator ===\n");
+  console.log("=== HrFlow.ai App Store Validator ===\n");
 
   const schemaPath = join(ROOT, "schemas", "app.schema.json");
   if (!existsSync(schemaPath)) {

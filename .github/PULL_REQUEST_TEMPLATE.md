@@ -24,6 +24,6 @@
 
 <!-- Quick start instructions -->
 
-## HrFlow APIs used
+## HrFlow.ai APIs used
 
-<!-- List the HrFlow API endpoints your app calls -->
+<!-- List the HrFlow.ai API endpoints your app calls -->

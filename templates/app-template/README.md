@@ -6,7 +6,7 @@
 
 Describe what your app does and the problem it solves.
 
-## HrFlow APIs used
+## HrFlow.ai APIs used
 
 - `GET /v1/profiles/searching` — Search candidate profiles
 - Add more endpoints as needed
@@ -35,8 +35,8 @@ npm start
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `HRFLOW_API_KEY` | Yes | HrFlow API secret key |
-| `HRFLOW_SOURCE_KEY` | Yes | HrFlow source key |
+| `HRFLOW_API_KEY` | Yes | HrFlow.ai API secret key |
+| `HRFLOW_SOURCE_KEY` | Yes | HrFlow.ai source key |
 
 ## Screenshots
 

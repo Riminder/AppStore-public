@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/hrflow/app-store-public/schemas/app.schema.json",
-  "title": "HrFlow App Manifest",
-  "description": "Schema for hackathon app submissions in the HrFlow App Store.",
+  "title": "HrFlow.ai App Manifest",
+  "description": "Schema for hackathon app submissions in the HrFlow.ai App Store.",
   "type": "object",
   "required": ["name", "description", "credentials", "settings"],
   "additionalProperties": false,
@@ -31,20 +31,20 @@
         "source_keys": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "HrFlow source keys."
+          "description": "HrFlow.ai source keys."
         },
         "board_keys": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "HrFlow board keys."
+          "description": "HrFlow.ai board keys."
         },
         "algorithm_key": {
           "type": "string",
-          "description": "HrFlow algorithm key."
+          "description": "HrFlow.ai algorithm key."
         },
         "secret_key": {
           "type": "string",
-          "description": "HrFlow API secret key."
+          "description": "HrFlow.ai API secret key."
         }
       }
     },

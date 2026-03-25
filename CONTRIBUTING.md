@@ -1,4 +1,4 @@
-# Contributing to HrFlow App Store
+# Contributing to HrFlow.ai App Store
 
 This guide explains how to submit your hackathon app.
 
@@ -6,7 +6,7 @@ This guide explains how to submit your hackathon app.
 
 - A GitHub account
 - Git installed locally
-- Your HrFlow API credentials (provided by organizers)
+- Your HrFlow.ai API credentials (provided by organizers)
 
 ## Step-by-Step Submission
 
@@ -44,7 +44,7 @@ Key rules:
 - `slug` must match your folder name exactly
 - `type` must be one of: `hiring-agent`, `sourcing-tool`, `analytics-dashboard`, `integration`, `other`
 - `stack.type` must be one of: `frontend`, `backend`, `fullstack`, `mobile`, `cli`, `extension`, `worker`
-- `hrflow.api_endpoints` must list which HrFlow API endpoints your app uses
+- `hrflow.api_endpoints` must list which HrFlow.ai API endpoints your app uses
 - `runtime.entrypoint` must be the command to start your app
 - `runtime.env_vars` must document every environment variable your app needs
 
@@ -67,7 +67,7 @@ Your README should explain:
 - How to install dependencies
 - How to configure environment variables
 - How to run the app
-- What HrFlow APIs it uses
+- What HrFlow.ai APIs it uses
 
 ### 7. Add a preview image
 

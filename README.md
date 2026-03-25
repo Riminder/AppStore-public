@@ -1,6 +1,6 @@
-# HrFlow App Store
+# HrFlow.ai App Store
 
-A public catalog of AI-powered HR apps built during the HrFlow Hackathon.
+A public catalog of AI-powered HR apps built during the HrFlow.ai Hackathon.
 
 Each app lives in its own folder at the repository root, uses its own stack, and follows a shared submission contract defined by `app.json`.
 
@@ -10,13 +10,13 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 
 | App | Team | Type | Stack | Description |
 |-----|------|------|-------|-------------|
-| [example-hiring-dashboard](./example-hiring-dashboard/) | HrFlow | hiring-agent | frontend (vanilla) | Example hiring dashboard using HrFlow APIs |
+| [example-hiring-dashboard](./example-hiring-dashboard/) | HrFlow.ai | hiring-agent | frontend (vanilla) | Example hiring dashboard using HrFlow.ai APIs |
 
 ## How It Works
 
-- Each team builds an app powered by the [HrFlow API](https://developers.hrflow.ai/)
+- Each team builds an app powered by the [HrFlow.ai API](https://developers.hrflow.ai/)
 - Apps can be anything: web apps, APIs, CLIs, browser extensions, mobile apps, workers
-- Each app folder contains an `app.json` manifest describing the app, its stack, and its HrFlow API usage
+- Each app folder contains an `app.json` manifest describing the app, its stack, and its HrFlow.ai API usage
 - CI validates every submission automatically on pull request
 
 ## For Teams
@@ -45,7 +45,7 @@ Every app folder must contain:
 
 | File | Purpose |
 |------|---------|
-| `app.json` | Public manifest — metadata, stack, HrFlow API usage |
+| `app.json` | Public manifest — metadata, stack, HrFlow.ai API usage |
 | `README.md` | What the app does and how to run it |
 | `.env.example` | Lists every env var the app needs with placeholder values |
 | `assets/preview.png` | At least one preview image |
