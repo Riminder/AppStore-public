@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/hrflow/app-store-public/schemas/app.schema.json",
+  "title": "HrFlow App Manifest",
+  "description": "Schema for hackathon app submissions in the HrFlow App Store.",
+  "type": "object",
+  "required": ["name", "description", "credentials", "settings"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path to the JSON schema file."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 80,
+      "description": "Human-readable name of the app."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 300,
+      "description": "Short description of what the app does."
+    },
+    "credentials": {
+      "type": "object",
+      "required": ["secret_key"],
+      "additionalProperties": false,
+      "properties": {
+        "source_keys": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "HrFlow source keys."
+        },
+        "board_keys": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "HrFlow board keys."
+        },
+        "algorithm_key": {
+          "type": "string",
+          "description": "HrFlow algorithm key."
+        },
+        "secret_key": {
+          "type": "string",
+          "description": "HrFlow API secret key."
+        }
+      }
+    },
+    "settings": {
+      "type": "object",
+      "required": ["team_name"],
+      "properties": {
+        "team_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Team name."
+        },
+        "theme_color": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Hex color code for the app theme."
+        },
+        "custom_filters": {
+          "type": "array",
+          "items": {},
+          "description": "Custom filter configurations."
+        },
+        "filters": {
+          "type": "array",
+          "items": {},
+          "description": "Filter configurations."
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

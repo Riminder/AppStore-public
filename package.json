@@ -1,0 +1,19 @@
+{
+  "name": "app-store-public",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "description": "HrFlow Hackathon App Store — A catalog of AI-powered HR apps built by hackathon teams.",
+  "scripts": {
+    "validate": "tsx scripts/validate-apps.ts",
+    "list": "tsx scripts/list-apps.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "ajv": "^8.17.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

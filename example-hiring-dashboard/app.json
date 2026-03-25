@@ -1,0 +1,17 @@
+{
+  "$schema": "../schemas/app.schema.json",
+  "name": "Hiring Dashboard",
+  "description": "A lightweight hiring dashboard that displays job listings and candidate profiles from HrFlow APIs.",
+  "credentials": {
+    "source_keys": ["source-key-for-candidates"],
+    "board_keys": ["board-key-for-jobs"],
+    "algorithm_key": "",
+    "secret_key": "your-hrflow-secret-key"
+  },
+  "settings": {
+    "team_name": "HrFlow",
+    "theme_color": "#5B5BE1",
+    "custom_filters": [],
+    "filters": []
+  }
+}

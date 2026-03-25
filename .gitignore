@@ -1,0 +1,40 @@
+# Secrets
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+vendor/
+.bundle/
+
+# Build artifacts
+dist/
+build/
+.next/
+out/
+*.pyc
+*.pyo
+*.egg-info/
+target/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
