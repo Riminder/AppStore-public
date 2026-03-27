@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/hrflow/app-store-public/schemas/app.schema.json",
+  "$id": "https://github.com/hrflow/AppStore-public/schemas/app.schema.json",
   "title": "HrFlow.ai App Manifest",
   "description": "Schema for hackathon app submissions in the HrFlow.ai App Store.",
   "type": "object",

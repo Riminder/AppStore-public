@@ -13,8 +13,8 @@ This guide explains how to submit your hackathon app.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/hrflow/app-store-public.git
-cd app-store-public
+git clone git@github.com:Riminder/AppStore-public.git
+cd AppStore-public
 ```
 
 ### 2. Create your branch
