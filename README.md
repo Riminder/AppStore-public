@@ -6,11 +6,13 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 
 ## Apps
 
-<!-- This table is updated as teams submit their apps. -->
+<!-- APP_TABLE_START -->
 
-| App | Team | Type | Stack | Description |
-|-----|------|------|-------|-------------|
-| [example-hiring-dashboard](./example-hiring-dashboard/) | HrFlow.ai | hiring-agent | frontend (vanilla) | Example hiring dashboard using HrFlow.ai APIs |
+| App | Team | Description |
+|-----|------|-------------|
+| [Hiring Dashboard](./stark-hiring-dashboard/) | HrFlow.ai | A lightweight hiring dashboard that displays job listings and candidate profiles from HrFlow.ai APIs. |
+
+<!-- APP_TABLE_END -->
 
 ## How It Works
 
@@ -33,7 +35,7 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 5. Add a preview image to `assets/`
 6. Fill in `.env.example` with the env vars your app needs
 7. Write a clear `README.md`
-8. Open a PR from branch `team/<your-app-slug>` to `main`
+8. Open a PR from branch `team/<your-app-slug>` to `master`
 
 ### Submission Rules
 
