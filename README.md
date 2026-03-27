@@ -50,13 +50,13 @@ Every app folder must contain:
 | `.env.example` | Lists every env var the app needs with placeholder values |
 | `assets/preview.png` | At least one preview image |
 
-## For Organizers
+## For PR Submissions
 
 ```bash
 # Install tooling dependencies
 npm install
 
-# Validate all submissions
+# Validate a submission
 npm run validate
 
 # List all apps
