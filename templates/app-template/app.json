@@ -5,8 +5,7 @@
   "credentials": {
     "source_keys": [],
     "board_keys": [],
-    "algorithm_key": "",
-    "secret_key": "your-hrflow-secret-key"
+    "algorithm_key": ""
   },
   "settings": {
     "team_name": "Your Team Name",

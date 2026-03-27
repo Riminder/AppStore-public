@@ -23,7 +23,6 @@ interface AppManifest {
     source_keys?: string[];
     board_keys?: string[];
     algorithm_key?: string;
-    secret_key: string;
   };
   settings: {
     team_name: string;

@@ -25,7 +25,7 @@
     },
     "credentials": {
       "type": "object",
-      "required": ["secret_key"],
+      "required": [],
       "additionalProperties": false,
       "properties": {
         "source_keys": {
@@ -41,10 +41,6 @@
         "algorithm_key": {
           "type": "string",
           "description": "HrFlow.ai algorithm key."
-        },
-        "secret_key": {
-          "type": "string",
-          "description": "HrFlow.ai API secret key."
         }
       }
     },
