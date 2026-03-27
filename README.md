@@ -26,7 +26,7 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 1. Fork or clone this repository
 2. Copy the template:
    ```bash
-   cp -r templates/app-template <your-team>-<your-app>/
+   cp -r templates/ <your-team>-<your-app>/
    ```
 3. Edit `app.json` with your app's metadata
 4. Build your app inside the folder

@@ -28,7 +28,7 @@ Branch naming convention: `team/<your-app-slug>` (e.g. `team/smart-recruiter`).
 ### 3. Create your app folder
 
 ```bash
-cp -r templates/app-template <your-team>-<your-app>/
+cp -r templates/ <your-team>-<your-app>/
 ```
 
 Your folder name must:
