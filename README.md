@@ -68,7 +68,7 @@ npm run list
 ## Repository Structure
 
 ```
-app-store-public/
+AppStore-public/
 ├── .github/            # CI workflows and PR template
 ├── schemas/            # JSON Schema for app.json
 ├── scripts/            # Validation and listing scripts
