@@ -171,10 +171,10 @@ class HrFlowService:
         return None
 
     def get_candidate_scores(self, job_reference):
-        endpoint = f"{self.base_url}/profiles/scoring"
+        endpoint = f"{self.base_url}/profiles/grading"
         params = {
-            'algorithm_key': self.algorithm_key,
-            'source_keys': json.dumps([self.source_key]),
+            'algorithm_key': "grader-hrflow-jobs",
+            'source_key': self.source_key,
             'board_key': self.board_key,
             'job_reference': str(job_reference)
         }

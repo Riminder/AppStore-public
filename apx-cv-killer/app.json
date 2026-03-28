@@ -1,14 +1,14 @@
 {
   "$schema": "../../schemas/app.schema.json",
-  "name": "Your App Name",
-  "description": "A short description of what your app does (10-300 characters).",
+  "name": "CV Killer",
+  "description": "AI recruitment tool",
   "credentials": {
-    "source_keys": [],
-    "board_keys": [],
-    "algorithm_key": ""
+    "source_keys": ["source_key"],
+    "board_keys": ["board_key"],
+    "algorithm_key": "algo_key"
   },
   "settings": {
-    "team_name": "Your Team Name",
+    "team_name": "APX",
     "theme_color": "#5B5BE1",
     "custom_filters": [],
     "filters": []

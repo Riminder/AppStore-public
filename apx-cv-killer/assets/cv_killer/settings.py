@@ -92,6 +92,8 @@ SSH_PASSWORD = os.getenv('SSH_PASSWORD', '')
 # 2. OpenClaw Configuration
 OPENCLAW_REMOTE_PORT = int(os.getenv('OPENCLAW_REMOTE_PORT', '18789'))
 OPENCLAW_GATEWAY_TOKEN = os.getenv('OPENCLAW_GATEWAY_TOKEN', '')
+OPENCLAW_API_KEY = os.getenv('OPENCLAW_API_KEY', '')
+OPENCLAW_BASE_URL = os.getenv('OPENCLAW_BASE_URL', '')
 
 # 3. HrFlow.ai Configuration
 HRFLOW_API_KEY = os.getenv('HRFLOW_API_KEY', '')
