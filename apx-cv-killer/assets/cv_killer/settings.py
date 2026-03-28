@@ -80,15 +80,33 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# External API Keys
-OPENCLAW_API_KEY = os.getenv('OPENCLAW_API_KEY', '')
+# ==========================================
+# CUSTOM APPLICATION SETTINGS
+# ==========================================
+
+# 1. SSH Configuration (For remote Mac Mini access)
+SSH_HOST = os.getenv('SSH_HOST', '192.168.0.25')
+SSH_USER = os.getenv('SSH_USER', 'hackathon-team2')
+SSH_PASSWORD = os.getenv('SSH_PASSWORD', '')
+
+# 2. OpenClaw Configuration
+OPENCLAW_REMOTE_PORT = int(os.getenv('OPENCLAW_REMOTE_PORT', '18789'))
+OPENCLAW_GATEWAY_TOKEN = os.getenv('OPENCLAW_GATEWAY_TOKEN', '')
+
+# 3. HrFlow.ai Configuration
 HRFLOW_API_KEY = os.getenv('HRFLOW_API_KEY', '')
 HRFLOW_SOURCE_KEY = os.getenv('HRFLOW_SOURCE_KEY', '')
-
-# External API Endpoints
-OPENCLAW_BASE_URL = os.getenv('OPENCLAW_BASE_URL', 'https://api.openclaw.io')
+HRFLOW_BOARD_KEY = os.getenv('HRFLOW_BOARD_KEY', '') # Critical for the Scoring API
 HRFLOW_BASE_URL = os.getenv('HRFLOW_BASE_URL', 'https://api.hrflow.ai/v1')
+HRFLOW_USER_EMAIL = os.getenv('HRFLOW_USER_EMAIL', '')
+HRFLOW_ALGORITHM_KEY = os.getenv('HRFLOW_ALGORITHM_KEY', '')
 
-# App Configuration
+# 4. App Limits & File Handling
 MAX_RESULTS = int(os.getenv('MAX_RESULTS', '10'))
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+
+# 5. Background Tasks (Celery)
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+# Recommended Celery settings for Django:
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
