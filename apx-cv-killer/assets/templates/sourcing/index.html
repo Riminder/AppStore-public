@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Job Offer - CV Killer{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <h1 class="page-title">Find Top Candidates</h1>
+
+        <div class="card mb-5">
+            <div class="card-body p-5">
+                <h3 class="mb-4">📋 Upload Job Offer</h3>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label for="title" class="form-label">Job Title *</label>
+                        <input type="text" class="form-control" id="title" name="title"
+                               placeholder="e.g., Senior Python Developer" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Job Description *</label>
+                        <textarea class="form-control" id="description" name="description"
+                                  rows="6" placeholder="Paste the full job description here..."
+                                  required></textarea>
+                        <small class="text-muted">Include responsibilities, requirements, and skills needed.</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="file" class="form-label">Upload Job Document (Optional)</label>
+                        <div class="file-upload">
+                            <input type="file" id="file" name="file"
+                                   accept=".pdf,.txt,.docx">
+                            <label for="file">
+                                <div>
+                                    <div style="font-size: 2rem; margin-bottom: 10px;">📄</div>
+                                    <div>Click to upload or drag and drop</div>
+                                    <small class="text-muted d-block mt-2">PDF, TXT, or DOCX (max 5MB)</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        🚀 Search Candidates
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if recent_jobs %}
+        <div class="mt-5">
+            <h3 class="mb-4">📁 Recent Searches</h3>
+            <div class="row">
+                {% for job in recent_jobs %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ job.title }}</h5>
+                            <p class="card-text text-muted small">{{ job.description|truncatewords:20 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ job.created_at|date:"M d, Y" }}</small>
+                                {% if job.search_sessions.count %}
+                                <a href="{% url 'search_results' job.search_sessions.first.id %}"
+                                   class="btn btn-sm btn-outline-primary">View Results</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-5 text-center">
+            <p class="text-muted">
+                <strong>{{ total_searches }}</strong> searches completed • Find top candidates across LinkedIn, GitHub, and more
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle file upload drag and drop
+    const fileInput = document.getElementById('file');
+    const fileLabel = document.querySelector('.file-upload label');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileLabel.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        fileLabel.addEventListener(eventName, () => {
+            fileLabel.style.borderColor = 'var(--secondary-color)';
+            fileLabel.style.background = '#f3f4f6';
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        fileLabel.addEventListener(eventName, () => {
+            fileLabel.style.borderColor = 'var(--primary-color)';
+            fileLabel.style.background = '#f9fafb';
+        }, false);
+    });
+
+    fileLabel.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+    }, false);
+</script>
+{% endblock %}
