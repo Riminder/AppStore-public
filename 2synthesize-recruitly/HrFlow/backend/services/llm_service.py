@@ -1,12 +1,11 @@
 """
-LLM service — supports 4 providers via LLM_PROVIDER env var:
+LLM service — supports 3 providers via LLM_PROVIDER env var:
 
-  LLM_PROVIDER=anthropic   → Claude API
-  LLM_PROVIDER=xai         → xAI Grok API (OpenAI-compatible)  ← current
-  LLM_PROVIDER=groq        → Groq cloud  (free tier, fast)
+  LLM_PROVIDER=anthropic   → Claude API (default, paid)
+  LLM_PROVIDER=groq        → Groq cloud  (free tier, fast)  ← recommended for hackathon
   LLM_PROVIDER=ollama      → Ollama local (100% free, needs local model)
 
-xAI, Groq and Ollama all expose an OpenAI-compatible API, so we use the openai
+Groq and Ollama both expose an OpenAI-compatible API, so we use the openai
 package for them. Anthropic keeps its own client.
 """
 
@@ -18,7 +17,7 @@ from typing import Any, Dict
 # Provider config
 # ---------------------------------------------------------------------------
 
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "xai").lower()
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "anthropic").lower()
 
 # --- Anthropic ---
 if LLM_PROVIDER == "anthropic":
@@ -27,15 +26,6 @@ if LLM_PROVIDER == "anthropic":
         api_key=os.getenv("ANTHROPIC_API_KEY", "")
     )
     MODEL = os.getenv("LLM_MODEL", "claude-sonnet-4-6")
-
-# --- xAI Grok (OpenAI-compatible) ---
-elif LLM_PROVIDER == "xai":
-    from openai import AsyncOpenAI
-    _openai_client = AsyncOpenAI(
-        base_url="https://api.x.ai/v1",
-        api_key=os.getenv("XAI_API_KEY", ""),
-    )
-    MODEL = os.getenv("LLM_MODEL", "grok-3-mini")
 
 # --- Groq (OpenAI-compatible) ---
 elif LLM_PROVIDER == "groq":
@@ -158,6 +148,8 @@ Rules:
 - decision must be one of: Hire, Consider, No Hire
 - confidence_level must be one of: High, Medium, Low
 - overall_score must be a float between 0.0 and 1.0
+- domain_fit: 2-3 sentences describing in which specific job domains/roles this candidate would excel, \
+which skills they can apply immediately, and the recommended role type.
 - Return ONLY valid JSON with the exact keys shown below, nothing else.
 
 Expected JSON:
@@ -172,9 +164,69 @@ Expected JSON:
   "technical_assessment": "...",
   "behavioral_assessment": "...",
   "consistency_analysis": "...",
-  "justification": "..."
+  "justification": "...",
+  "domain_fit": "Strong fit for Backend Development and DevOps roles. Can contribute immediately on CI/CD pipelines and API development. Recommended entry point: Junior Backend Engineer."
 }
 """
+
+# ---------------------------------------------------------------------------
+# Agent 0 — Test Sheet Parsing Agent
+# ---------------------------------------------------------------------------
+
+TEST_PARSE_SYSTEM_PROMPT = """\
+You are an AI technical test evaluator.
+
+You receive the text content of a technical test sheet or evaluation form.
+Your task is to extract the competencies that were evaluated and normalize the scores to a 1-5 scale.
+
+Rules:
+- Extract all evaluated competencies and their scores.
+- Normalize scores to a 1-5 integer scale (1=weak, 2=insufficient, 3=acceptable, 4=good, 5=excellent).
+- Group competency keys as: "technical.<skill>", "soft.<skill>", or "motivation.<skill>".
+- target_skills: list of clean skill names (no prefix) found in the test.
+- Return ONLY valid JSON with the exact keys shown below, nothing else.
+
+Expected JSON:
+{
+  "scores": {
+    "technical.python": 4,
+    "soft.communication": 3,
+    "motivation.role_interest": 5
+  },
+  "target_skills": ["Python", "Communication", "Role interest"]
+}
+"""
+
+
+async def parse_test_sheet(file_text: str) -> Dict[str, Any]:
+    """Call the configured LLM to extract structured scores from a test sheet."""
+    raw = await _chat(TEST_PARSE_SYSTEM_PROMPT, file_text)
+    return json.loads(_strip_fences(raw))
+
+
+# ---------------------------------------------------------------------------
+# Agent 0b — Candidate Name Extractor (bypasses HrFlow name parsing bugs)
+# ---------------------------------------------------------------------------
+
+NAME_EXTRACT_PROMPT = """\
+You are a CV parser. Extract only the candidate's full name from the CV text below.
+
+Rules:
+- Return ONLY the full name as plain text (e.g. "Nabil Marc Chartouni").
+- Correct capitalisation (First Last format).
+- Do NOT return JSON, labels, or any other text — just the name.
+- If you cannot determine the name, return an empty string.
+"""
+
+
+async def extract_candidate_name(cv_text: str) -> str:
+    """Use the LLM to extract the candidate's full name from raw CV text."""
+    # Only send the first 800 chars — the name is always near the top
+    snippet = cv_text[:800].strip()
+    if not snippet:
+        return ""
+    raw = await _chat(NAME_EXTRACT_PROMPT, snippet)
+    return raw.strip()
 
 
 async def generate_synthesis(assessment_object: Dict[str, Any]) -> Dict[str, Any]:
