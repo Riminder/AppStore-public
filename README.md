@@ -25,17 +25,21 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 
 ### Quick Start
 
-1. Fork or clone this repository
-2. Copy the template:
+1. **Fork** this repository to your own GitHub account
+2. Clone your fork:
+   ```bash
+   git clone git@github.com:<your-username>/AppStore-public.git
+   ```
+3. Copy the template:
    ```bash
    cp -r templates/ <your-team>-<your-app>/
    ```
-3. Edit `app.json` with your app's metadata
-4. Build your app inside the folder
-5. Add a preview image to `assets/`
-6. Fill in `.env.example` with the env vars your app needs
-7. Write a clear `README.md`
-8. Open a PR from branch `team/<your-app-slug>` to `master`
+4. Edit `app.json` with your app's metadata
+5. Build your app inside the folder
+6. Add a preview image to `assets/`
+7. Fill in `.env.example` with the env vars your app needs
+8. Write a clear `README.md`
+9. Push to your fork and open a PR to this repository's `master` branch
 
 ### Submission Rules
 

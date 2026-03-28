@@ -10,14 +10,18 @@ This guide explains how to submit your hackathon app.
 
 ## Step-by-Step Submission
 
-### 1. Clone the repository
+### 1. Fork the repository
+
+Click the **Fork** button on [the repo page](https://github.com/Riminder/AppStore-public) to create a copy under your own GitHub account.
+
+### 2. Clone your fork
 
 ```bash
-git clone git@github.com:Riminder/AppStore-public.git
+git clone git@github.com:<your-username>/AppStore-public.git
 cd AppStore-public
 ```
 
-### 2. Create your branch
+### 3. Create your branch
 
 ```bash
 git checkout -b team/<your-app-slug>
@@ -25,7 +29,7 @@ git checkout -b team/<your-app-slug>
 
 Branch naming convention: `team/<your-app-slug>` (e.g. `team/smart-recruiter`).
 
-### 3. Create your app folder
+### 4. Create your app folder
 
 ```bash
 cp -r templates/ <your-team>-<your-app>/
@@ -36,7 +40,7 @@ Your folder name must:
 - Match the `slug` field in your `app.json`
 - Live directly at the repository root
 
-### 4. Edit your `app.json`
+### 5. Edit your `app.json`
 
 Fill in all required fields. See `schemas/app.schema.json` for the full specification.
 
@@ -48,7 +52,7 @@ Key rules:
 - `runtime.entrypoint` must be the command to start your app
 - `runtime.env_vars` must document every environment variable your app needs
 
-### 5. Fill in `.env.example`
+### 6. Fill in `.env.example`
 
 List every environment variable your app needs with placeholder values:
 
@@ -60,7 +64,7 @@ OPENAI_API_KEY=sk-your-key-here
 
 **Never commit real API keys.** Use placeholders only.
 
-### 6. Write your `README.md`
+### 7. Write your `README.md`
 
 Your README should explain:
 - What the app does
@@ -69,7 +73,7 @@ Your README should explain:
 - How to run the app
 - What HrFlow.ai APIs it uses
 
-### 7. Add a preview image
+### 8. Add a preview image
 
 Place at least one screenshot or preview image in `assets/`:
 
@@ -79,7 +83,7 @@ your-app/assets/preview.png
 
 Supported formats: `.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`, `.webp`
 
-### 8. Build your app
+### 9. Build your app
 
 Build whatever you want inside your folder. There are no restrictions on:
 - Programming language
@@ -89,7 +93,7 @@ Build whatever you want inside your folder. There are no restrictions on:
 
 Your app is fully autonomous.
 
-### 9. Open a Pull Request
+### 10. Push and open a Pull Request
 
 ```bash
 git add <your-app-folder>/
@@ -97,7 +101,7 @@ git commit -m "feat: add <your-app-name>"
 git push origin team/<your-app-slug>
 ```
 
-Then open a PR targeting `main`. Fill in the PR template checklist.
+Then go to the original repository and open a PR from your fork targeting `master`. Fill in the PR template checklist.
 
 ## Rules
 
