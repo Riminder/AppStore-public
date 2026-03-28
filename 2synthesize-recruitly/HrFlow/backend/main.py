@@ -12,7 +12,8 @@ Architecture:
 
 import json as _json
 import os
-from typing import Any, Dict
+from contextlib import asynccontextmanager
+from typing import Any, Dict, List
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
@@ -20,12 +21,28 @@ from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
-from schemas import InterviewInput
-from services.fusion_service import build_fusion_object
-from services.hrflow_service import parse_and_score, parse_cv
-from services.llm_service import extract_interview_signals, generate_synthesis
+try:
+    from .schemas import InterviewInput
+    from .services.fusion_service import build_fusion_object
+    from .services.hrflow_service import parse_and_score, parse_cv
+    from .services.jobs_service import get_jobs, load_jobs_from_file
+    from .services.llm_service import extract_candidate_name, extract_interview_signals, generate_synthesis
+except ImportError:
+    from schemas import InterviewInput
+    from services.fusion_service import build_fusion_object
+    from services.hrflow_service import parse_and_score, parse_cv
+    from services.jobs_service import get_jobs, load_jobs_from_file
+    from services.llm_service import extract_candidate_name, extract_interview_signals, generate_synthesis, parse_test_sheet
 
-app = FastAPI(title="AI Candidate Synthesis Agent", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Load jobs from local JSON file on startup."""
+    load_jobs_from_file()
+    yield
+
+
+app = FastAPI(title="AI Candidate Synthesis Agent", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -48,7 +65,9 @@ async def parse_cv_endpoint(
     """
     Receive a CV file, forward it to HrFlow, return structured profile data.
     Uses HrFlow POST /v1/profile/parsing/file.
+    Name is extracted independently via LLM to avoid HrFlow name parsing bugs.
     """
+    import io
     content = await file.read()
     try:
         result = await parse_cv(
@@ -60,8 +79,29 @@ async def parse_cv_endpoint(
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"HrFlow parsing failed: {exc}")
 
+    # Extract candidate name via LLM from raw PDF text (more reliable than HrFlow)
+    full_name = result["full_name"]
+    try:
+        filename_lower = (file.filename or "").lower()
+        if filename_lower.endswith(".pdf") or file.content_type == "application/pdf":
+            from pypdf import PdfReader
+            reader = PdfReader(io.BytesIO(content))
+            cv_text = "\n".join(p.extract_text() or "" for p in reader.pages)
+        else:
+            cv_text = content.decode("utf-8", errors="ignore")
+
+        if cv_text.strip():
+            llm_name = await extract_candidate_name(cv_text)
+            if llm_name:
+                full_name = llm_name
+    except Exception:
+        pass  # keep HrFlow name as fallback
+
     return {
         "profile_key": result["profile_key"],
+        "full_name":   full_name,
+        "first_name":  result["first_name"],
+        "last_name":   result["last_name"],
         "skills": result["skills"],
         "experience_count": len(result["experiences"]),
         "education_count": len(result["educations"]),
@@ -132,6 +172,44 @@ async def generate_candidate_synthesis(payload: dict) -> Dict[str, Any]:
         raise HTTPException(status_code=502, detail=f"LLM synthesis failed: {exc}")
 
     return report
+
+
+# ---------------------------------------------------------------------------
+# 14.X — Parse Test Sheet
+# ---------------------------------------------------------------------------
+
+@app.post("/api/test/parse")
+async def parse_test_sheet_endpoint(file: UploadFile = File(...)) -> Dict[str, Any]:
+    """
+    Parse a technical test sheet (PDF or text) and extract structured scores.
+    Returns scores dict (category.skill → 1-5) and detected target_skills list.
+    """
+    import io
+    content = await file.read()
+    filename = (file.filename or "").lower()
+
+    if filename.endswith(".pdf") or file.content_type == "application/pdf":
+        try:
+            from pypdf import PdfReader
+            reader = PdfReader(io.BytesIO(content))
+            text = "\n".join(p.extract_text() or "" for p in reader.pages)
+        except Exception as exc:
+            raise HTTPException(status_code=422, detail=f"Could not read PDF: {exc}")
+    else:
+        try:
+            text = content.decode("utf-8")
+        except UnicodeDecodeError:
+            raise HTTPException(status_code=422, detail="File must be a PDF or UTF-8 text file")
+
+    if not text.strip():
+        raise HTTPException(status_code=422, detail="Could not extract text from file")
+
+    try:
+        result = await parse_test_sheet(text)
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"LLM test parsing failed: {exc}")
+
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -227,6 +305,19 @@ async def full_pipeline(
         "assessment": assessment,
         "synthesis_report": report,
     }
+
+
+# ---------------------------------------------------------------------------
+# Jobs list (autocomplete)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/jobs/list")
+async def jobs_list() -> Dict[str, Any]:
+    """
+    Return all cached jobs for frontend autocomplete.
+    Each item: { key, title, skills, summary }
+    """
+    return {"jobs": get_jobs()}
 
 
 # ---------------------------------------------------------------------------
