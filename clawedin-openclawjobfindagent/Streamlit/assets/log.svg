@@ -1,0 +1,31 @@
+<svg width="100%" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  
+</defs>
+
+<!-- Claw stripes — left side -->
+<path d="M180 60 Q148 130 168 210" stroke="#1d4ed8" stroke-width="7" fill="none" stroke-linecap="round" style="fill:none;stroke:rgb(29, 78, 216);color:rgb(255, 255, 255);stroke-width:7px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<path d="M210 50 Q172 135 196 220" stroke="#2563eb" stroke-width="10" fill="none" stroke-linecap="round" style="fill:none;stroke:rgb(37, 99, 235);color:rgb(255, 255, 255);stroke-width:10px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<path d="M240 60 Q210 138 238 218" stroke="#3b82f6" stroke-width="7" fill="none" stroke-linecap="round" style="fill:none;stroke:rgb(59, 130, 246);color:rgb(255, 255, 255);stroke-width:7px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- AI sparkle dots -->
+<circle cx="272" cy="58" r="5" fill="#60a5fa" style="fill:rgb(96, 165, 250);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="290" cy="44" r="3.5" fill="#93c5fd" style="fill:rgb(147, 197, 253);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<circle cx="285" cy="72" r="3" fill="#3b82f6" style="fill:rgb(59, 130, 246);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- Main wordmark -->
+<text x="300" y="160" font-size="72" font-weight="500" font-family="var(--font-sans), system-ui" letter-spacing="-2" style="fill:rgb(241, 245, 249);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif, system-ui;font-size:72px;font-weight:500;text-anchor:start;dominant-baseline:auto">Clawed</text>
+<text x="524" y="160" font-size="72" font-weight="500" font-family="var(--font-sans), system-ui" fill="#3b82f6" letter-spacing="-2" style="fill:rgb(59, 130, 246);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif, system-ui;font-size:72px;font-weight:500;text-anchor:start;dominant-baseline:auto">In</text>
+
+<!-- Tagline -->
+<text x="300" y="195" font-size="13" font-family="var(--font-sans), system-ui" letter-spacing="3" style="fill:rgb(100, 116, 139);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif, system-ui;font-size:13px;font-weight:400;text-anchor:start;dominant-baseline:auto">AI-POWERED JOB AGENT</text>
+
+<!-- Divider -->
+<line x1="300" y1="214" x2="570" y2="214" stroke="#1e3a5f" stroke-width="1" style="fill:rgb(0, 0, 0);stroke:rgb(30, 58, 95);color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- Powered by line -->
+<text x="300" y="238" font-size="12" font-family="var(--font-sans), system-ui" style="fill:rgb(71, 85, 105);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif, system-ui;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">Powered by </text>
+<text x="374" y="238" font-size="12" font-family="var(--font-sans), system-ui" fill="#3b82f6" style="fill:rgb(59, 130, 246);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif, system-ui;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">OpenClaw</text>
+<text x="440" y="238" font-size="12" font-family="var(--font-sans), system-ui" style="fill:rgb(71, 85, 105);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif, system-ui;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto"> + </text>
+<text x="456" y="238" font-size="12" font-family="var(--font-sans), system-ui" fill="#10b981" style="fill:rgb(16, 185, 129);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif, system-ui;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">HrFlow.ai</text>
+</svg>

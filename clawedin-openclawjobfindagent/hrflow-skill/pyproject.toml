@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "hrflow-skill"
+version = "0.1.0"
+description = ""
+authors = ["Jiso Chacko <jisochacko007@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "0.103.2"
+uvicorn = ">=0.42.0,<0.43.0"
+hrflow = ">=4.2.0,<5.0.0"
+python-multipart = ">=0.0.22,<0.0.23"
+python-dotenv = ">=1.2.2,<2.0.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
