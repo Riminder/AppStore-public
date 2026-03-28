@@ -1,0 +1,254 @@
+[
+  {
+    "url": "https://github.com/mlegy",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 1)",
+    "confidence": 0.95
+  },
+  {
+    "url": "https://orcid.org/0009-0008-9487-5022",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 1)",
+    "confidence": 0.95
+  },
+  {
+    "url": "https://github.com/d-kleine",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 2)",
+    "confidence": 0.94
+  },
+  {
+    "url": "https://orcid.org/0009-0000-8860-2847",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 2)",
+    "confidence": 0.94
+  },
+  {
+    "url": "https://github.com/mlodel",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 3)",
+    "confidence": 0.93
+  },
+  {
+    "url": "https://orcid.org/0009-0002-2378-3039",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 3)",
+    "confidence": 0.93
+  },
+  {
+    "url": "https://github.com/twerkmeister",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 4)",
+    "confidence": 0.92
+  },
+  {
+    "url": "https://orcid.org/0009-0009-5116-1553",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 4)",
+    "confidence": 0.92
+  },
+  {
+    "url": "https://www.stepstone.de/jobs/ai-prompt-engineer/in-berlin",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 1)",
+    "confidence": 0.92
+  },
+  {
+    "url": "https://github.com/Glebanister",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 5)",
+    "confidence": 0.91
+  },
+  {
+    "url": "https://orcid.org/0009-0001-7189-561X",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 5)",
+    "confidence": 0.91
+  },
+  {
+    "url": "https://berlin.de.expertini.com/job/ai-application-engineer-ai-products-llm-rag-berlin-machine-learning-reply-ea427a0562d7/",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 2)",
+    "confidence": 0.905
+  },
+  {
+    "url": "https://github.com/shafaypro",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 6)",
+    "confidence": 0.9
+  },
+  {
+    "url": "https://orcid.org/0009-0009-1797-0250",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 6)",
+    "confidence": 0.9
+  },
+  {
+    "url": "https://github.com/melanietosik",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 7)",
+    "confidence": 0.89
+  },
+  {
+    "url": "https://orcid.org/0009-0004-8248-1780",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 7)",
+    "confidence": 0.89
+  },
+  {
+    "url": "https://www.promptingguide.ai/techniques/rag",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 3)",
+    "confidence": 0.89
+  },
+  {
+    "url": "https://github.com/nimanzik",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 8)",
+    "confidence": 0.88
+  },
+  {
+    "url": "https://orcid.org/0009-0001-1822-9191",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 8)",
+    "confidence": 0.88
+  },
+  {
+    "url": "https://blogs.oracle.com/ai-and-datascience/enhancing-rag-with-advanced-prompting",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 4)",
+    "confidence": 0.875
+  },
+  {
+    "url": "https://github.com/maxi-w",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 9)",
+    "confidence": 0.87
+  },
+  {
+    "url": "https://orcid.org/0009-0009-8040-979X",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 9)",
+    "confidence": 0.87
+  },
+  {
+    "url": "https://github.com/strawberrypie",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 10)",
+    "confidence": 0.86
+  },
+  {
+    "url": "https://orcid.org/0009-0006-5378-9115",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 10)",
+    "confidence": 0.86
+  },
+  {
+    "url": "https://mljar.com/ai-prompts/llm-engineer/rag-and-retrieval/prompt-rag-system-design/",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 5)",
+    "confidence": 0.86
+  },
+  {
+    "url": "https://github.com/codepo8",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 11)",
+    "confidence": 0.85
+  },
+  {
+    "url": "https://orcid.org/0000-0002-8097-2373",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 11)",
+    "confidence": 0.85
+  },
+  {
+    "url": "https://aws.amazon.com/what-is/retrieval-augmented-generation/",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 6)",
+    "confidence": 0.845
+  },
+  {
+    "url": "https://github.com/dhpollack",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 12)",
+    "confidence": 0.84
+  },
+  {
+    "url": "https://orcid.org/0000-0002-6208-8816",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 12)",
+    "confidence": 0.84
+  },
+  {
+    "url": "https://github.com/cavvia",
+    "source_type": "github",
+    "discovery_query": "ML engineer location:Berlin",
+    "reason": "GitHub profile detected (API match, rank 13)",
+    "confidence": 0.83
+  },
+  {
+    "url": "https://orcid.org/0000-0002-5781-6137",
+    "source_type": "orcid",
+    "discovery_query": "ML engineer",
+    "reason": "ORCID profile detected (API match, rank 13)",
+    "confidence": 0.83
+  },
+  {
+    "url": "https://www.stackai.com/blog/prompt-engineering-for-rag-pipelines-the-complete-guide-to-prompt-engineering-for-retrieval-augmented-generation",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 7)",
+    "confidence": 0.83
+  },
+  {
+    "url": "https://techdrivenz.com/building-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration/",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 8)",
+    "confidence": 0.815
+  },
+  {
+    "url": "https://www.newline.co/@Dipen/optimizing-ai-inferences-how-to-implement-prompt-engineering-in-advance-rag--12fdf8d0",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 9)",
+    "confidence": 0.8
+  },
+  {
+    "url": "https://handbook.exemplar.dev/ai_engineer/prompt_engineering",
+    "source_type": "public_web",
+    "discovery_query": "ML engineer AI prompting RAG Berlin",
+    "reason": "Matched query keywords (Web search, rank 10)",
+    "confidence": 0.785
+  }
+]
