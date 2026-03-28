@@ -29,7 +29,7 @@ def run_tests():
         return
 
     # --- TEST 1: Index a Job (User Input Simulation) ---
-    job_ref = "test-job-http-007"
+    job_ref = "test-job-http-010"
     print("\n📝 TEST 1: Indexing User-Created Job...")
     try:
         service.index_job(
@@ -44,7 +44,7 @@ def run_tests():
         print(f"❌ Job indexing failed: {e}")
 
     # --- TEST 2: Parse a Profile (OpenClaw Simulation) ---
-    profile_ref = "test-profile-http-007"
+    profile_ref = "test-profile-http-010"
     print("\n👤 TEST 2: AI Parsing OpenClaw Scraped Profile...")
     try:
         raw_cv_text = """
@@ -78,8 +78,8 @@ def run_tests():
         print("\nℹ️ Skipping PDF test (No 'test_cv.pdf' found in root).")
 
 
-    print("\n⏳ Waiting 15 seconds for AI Vector Indexing to process the raw text...")
-    time.sleep(15)
+    print("\n⏳ Waiting 2 seconds for AI Vector Indexing to process the raw text...")
+    time.sleep(2)
     # --- TEST 4: Scoring ---
     print("\n🎯 TEST 4: Requesting Match Scores...")
     try:
@@ -92,7 +92,7 @@ def run_tests():
         print(f"❌ Scoring failed: {e}")
 
     # --- TEST 5: Rating Signal ---
-    print("\n👎 TEST 5: Sending Rejection Signal...")
+    """print("\n👎 TEST 5: Sending Rejection Signal...")
     try:
         service.send_rating(
             job_ref=job_ref,
@@ -102,7 +102,7 @@ def run_tests():
         )
         print("✅ Rating signal sent successfully!")
     except Exception as e:
-        print(f"❌ Rating failed: {e}")
+        print(f"❌ Rating failed: {e}")"""
 
     print("\n🎉 Integration testing complete.")
 

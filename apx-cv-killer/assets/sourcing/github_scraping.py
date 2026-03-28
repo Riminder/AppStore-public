@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
     # Exemple d'usage : récupérer exactement 100 profils Python à Paris (si disponibles)
     # mettre votre token ici (ghp_xxx) pour ne pas être bloqué
-    users = get_github_profiles_one_page("location:Paris language:Python", token=GITHUB_TOKEN)
+    users = get_github_profiles_one_page("location:Paris language:Rust", token=GITHUB_TOKEN)
     print(f"Trouvé {len(users)} utilisateurs")
     for u in users:
         print(u.get("login"), u.get("html_url"))
