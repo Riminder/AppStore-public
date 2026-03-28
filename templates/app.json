@@ -1,16 +1,17 @@
 {
-  "$schema": "../../schemas/app.schema.json",
-  "name": "Your App Name",
-  "description": "A short description of what your app does (10-300 characters).",
+  "$schema": "https://github.com/hrflow/AppStore-public/schemas/app.schema.json",
+  "name": "404-Job-Not-Found",
+  "description": "An HRFlow hackathon app that fetches a candidate profile and a job, runs a 5-question AI interview, and produces a final report with both interview scoring and HRFlow profile-job matching.",
   "credentials": {
-    "source_keys": [],
-    "board_keys": [],
-    "algorithm_key": ""
+    "source_keys": [
+      "da13ffd3b3fe72839848d91144b4e39d5cba2819"
+    ],
+    "board_keys": [
+      "c99d70c3a062c2f99ca78fce23b89fb4f53119ef"
+    ]
   },
   "settings": {
-    "team_name": "Your Team Name",
-    "theme_color": "#5B5BE1",
-    "custom_filters": [],
-    "filters": []
+    "team_name": "404-Job-Not-Found",
+    "theme_color": "#4F46E5"
   }
 }
