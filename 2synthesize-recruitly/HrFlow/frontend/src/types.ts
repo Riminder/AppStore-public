@@ -92,12 +92,20 @@ export interface SynthesisReport {
   behavioral_assessment: string
   consistency_analysis: string
   justification: string
+  domain_fit: string
 }
 
 export interface PipelineResult {
   pipeline_steps: Record<string, boolean>
   assessment: CandidateAssessment
   synthesis_report: SynthesisReport
+}
+
+export interface JobOption {
+  key: string
+  title: string
+  skills: string[]
+  summary: string
 }
 
 export interface FormValues {
@@ -107,9 +115,10 @@ export interface FormValues {
   jobId: string
   boardKey: string
   sourceKey: string
-  targetSkills: string
+  targetSkills: string        // auto-filled from test parse
   cvFile: File | null
-  testResultsJson: string
+  testFile: File | null       // replaces manual JSON — parsed automatically
+  testResultsJson: string     // auto-filled after test parse
   interviewType: InterviewType
   reviewText: string
 }
