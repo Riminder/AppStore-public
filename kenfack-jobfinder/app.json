@@ -1,0 +1,16 @@
+{
+  "$schema": "../schemas/app.schema.json",
+  "name": "JobFinder",
+  "description": "AI-powered job search assistant using HrFlow.ai for CV parsing, profile-job scoring, semantic search, match explanation, and skill extraction — combined with Claude for personalized career coaching and document generation.",
+  "credentials": {
+    "source_keys": ["your-hrflow-source-key"],
+    "board_keys": ["your-hrflow-board-key"],
+    "algorithm_key": ""
+  },
+  "settings": {
+    "team_name": "Franck Ulrich Kenfack",
+    "theme_color": "#2563EB",
+    "custom_filters": [],
+    "filters": []
+  }
+}
