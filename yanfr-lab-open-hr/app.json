@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schemas/app.schema.json",
+  "name": "Open HR — AI Sourcing Agent",
+  "description": "AI sourcing agent that auto-generates questionnaires from job descriptions, scores candidates using HrFlow.ai Scoring API with custom weight sliders, and ranks profiles with explainable scores.",
+  "credentials": {
+    "source_keys": ["c1039b004a836e42427b9c89309ad99cf9b6a73c"],
+    "board_keys": ["c99d70c3a062c2f99ca78fce23b89fb4f53119ef"],
+    "algorithm_key": "b1ebac4c62fa96e06206f4433b95ae69674891ff"
+  },
+  "settings": {
+    "team_name": "yanfr-lab",
+    "theme_color": "#83D9DC",
+    "custom_filters": [],
+    "filters": []
+  }
+}
