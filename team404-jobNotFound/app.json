@@ -1,6 +1,6 @@
 {
   "$schema": "https://github.com/hrflow/AppStore-public/schemas/app.schema.json",
-  "name": "404-Job-Not-Found",
+  "name": "jobNotFound",
   "description": "An HRFlow hackathon app that fetches a candidate profile and a job, runs a 5-question AI interview, and produces a final report with both interview scoring and HRFlow profile-job matching.",
   "credentials": {
     "source_keys": [
@@ -11,7 +11,7 @@
     ]
   },
   "settings": {
-    "team_name": "404-Job-Not-Found",
+    "team_name": "team404",
     "theme_color": "#4F46E5"
   }
 }
