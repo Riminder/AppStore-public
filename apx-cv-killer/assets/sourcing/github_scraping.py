@@ -4,7 +4,7 @@ import os
 # Charger les variables
 load_dotenv()
 
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+GITHUB_TOKEN = ""
 
 def get_github_profiles(query, per_page=100, max_pages=10, token=None):
     """Retourne une liste d'utilisateurs GitHub correspondant à une query de recherche.

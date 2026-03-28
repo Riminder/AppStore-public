@@ -29,22 +29,23 @@ def run_tests():
         return
 
     # --- TEST 1: Index a Job (User Input Simulation) ---
-    job_ref = "test-job-http-010"
-    print("\n📝 TEST 1: Indexing User-Created Job...")
+    job_ref = "test-job-http-012"
+    print("\n📝 TEST 1: AI Parsing and Indexing Job...")
     try:
-        service.index_job(
-            reference=job_ref,
-            title="Senior Django Developer",
-            description="Looking for an expert Python/Django developer for a hackathon project.",
-            skills=["Python", "Django", "APIs"],
-            location_text="Paris, France"
-        )
-        print("✅ Job indexed successfully!")
+        raw_job_text = """
+        Job Title: Senior Django Developer
+        Location: Paris, France
+        
+        Looking for an expert Python/Django developer for a hackathon project. 
+        Required Skills: Python, Django, REST APIs, PostgreSQL.
+        """
+        service.index_job(reference=job_ref, raw_text=raw_job_text)
+        print("✅ Job parsed and indexed successfully!")
     except Exception as e:
         print(f"❌ Job indexing failed: {e}")
 
     # --- TEST 2: Parse a Profile (OpenClaw Simulation) ---
-    profile_ref = "test-profile-http-010"
+    profile_ref = "test-profile-http-012"
     print("\n👤 TEST 2: AI Parsing OpenClaw Scraped Profile...")
     try:
         raw_cv_text = """
