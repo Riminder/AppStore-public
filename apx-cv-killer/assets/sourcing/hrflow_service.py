@@ -75,7 +75,7 @@ class HrFlowService:
         logger.info(f"Successfully indexed Job: {reference}")
         return response.json()
 
-    def parse_profile(self, reference, file_path=None, raw_text=None, source_url=None):
+    def parse_profile(self, reference, profile_data=None, source_url=None, file_path=None):
         """
         Hackathon Bypass: Since the free tier blocks synchronous AI Document Parsing,
         we use the Text Parsing API to extract structured data (skills, experiences),
@@ -84,7 +84,7 @@ class HrFlowService:
         if not raw_text and file_path:
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
-                    raw_text = f.read()
+                    profile_data = f.read()
             except:
                 raw_text = "See attached file."
         
@@ -197,3 +197,4 @@ class HrFlowService:
         response = requests.post(endpoint, headers=self._get_headers(is_json=True), json=payload)
         self._handle_error(response)
         return response.json()
+    
