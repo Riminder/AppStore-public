@@ -1,0 +1,251 @@
+"""
+CV Killer - AI Sourcing Agent Integration Guide
+
+This module provides a quick reference for integrating OpenClaw and HrFlow APIs
+"""
+
+# ============================================================================
+# OPENCLAW API INTEGRATION
+# ============================================================================
+
+"""
+OpenClaw is used for intelligent web scraping to find candidate profiles.
+
+ENDPOINT: POST /search
+BASE_URL: https://api.openclaw.io (configurable via OPENCLAW_BASE_URL)
+
+HEADERS:
+{
+    "Authorization": "Bearer {OPENCLAW_API_KEY}",
+    "Content-Type": "application/json"
+}
+
+REQUEST PAYLOAD:
+{
+    "query": "Senior Python Developer with Django experience",
+    "sources": ["linkedin", "github", "portfolios", "cv_databases"],
+    "limit": 10,
+    "filters": {
+        "location": "optional",
+        "experience_level": "optional",
+        "skills": ["optional_list"]
+    }
+}
+
+EXPECTED RESPONSE:
+{
+    "results": [
+        {
+            "url": "https://linkedin.com/in/example",
+            "source": "linkedin",
+            "name": "John Doe",
+            "title": "Senior Developer",
+            "bio": "...",
+            "skills": ["Python", "Django", ...],
+            "experience": "10 years",
+            "raw_html": "...",
+            "..": "other profile data"
+        }
+    ],
+    "total_results": 150,
+    "processing_time": 2.3
+}
+
+IMPLEMENTATION:
+See: sourcing/services.py -> OpenclawService.search_profiles()
+
+TODO:
+1. Replace the placeholder endpoint with actual OpenClaw endpoint
+2. Adjust request format based on OpenClaw API documentation
+3. Add error handling for rate limiting
+4. Implement pagination for large result sets
+"""
+
+
+# ============================================================================
+# HRFLOW.AI API INTEGRATION
+# ============================================================================
+
+"""
+HrFlow.ai is used for:
+1. Parsing CVs/profiles into standardized format
+2. Scoring candidates against job requirements
+3. Extracting skills, experience, and qualifications
+
+BASE_URL: https://api.hrflow.ai/v1 (configurable via HRFLOW_BASE_URL)
+
+AUTHENTICATION:
+Uses API key headers - no bearer token needed
+
+HEADERS:
+{
+    "X-API-KEY": {HRFLOW_API_KEY},
+    "Content-Type": "application/json"
+}
+
+
+## 1. PROFILES PARSING ENDPOINT
+endpoint: POST /profiles/parsing
+
+REQUEST:
+{
+    "source_key": {HRFLOW_SOURCE_KEY},
+    "data": {
+        "raw_text": "CV content as text",
+        "or_url": "https://profile.url"
+    }
+}
+
+RESPONSE:
+{
+    "code": 200,
+    "profile": {
+        "id": "profile_id",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone": "+33...",
+        "location": "Paris, France",
+        "summary": "...",
+        "experiences": [...],
+        "skills": [...],
+        "education": [...],
+        "certifications": [...]
+    }
+}
+
+Implementation: sourcing/services.py -> HrFlowService.parse_profile()
+
+
+## 2. PROFILES SCORING ENDPOINT
+endpoint: POST /profiles/scoring
+
+REQUEST:
+{
+    "source_key": {HRFLOW_SOURCE_KEY},
+    "job_id": "optional_job_id",
+    "job_description": "Full job description text",
+    "candidate": {parsed_profile_from_step_1}
+}
+
+RESPONSE:
+{
+    "code": 200,
+    "score": 85,
+    "match_percentage": 88.5,
+    "skills": {
+        "matched": ["Python", "Django", "PostgreSQL"],
+        "missing": ["Kubernetes"],
+        "extra": ["Go"]
+    },
+    "experience": {
+        "required_years": 5,
+        "candidate_years": 10,
+        "match": true
+    },
+    "strengths": ["..."],
+    "gaps": ["..."]
+}
+
+Implementation: sourcing/services.py -> HrFlowService.score_candidate()
+
+
+## 3. PROFILES SEARCHING ENDPOINT
+endpoint: GET /profiles/searching
+
+PARAMETERS:
+- source_key: {HRFLOW_SOURCE_KEY}
+- name: candidate name or "John*" for partial
+- email: candidate email
+- location: candidate location
+- limit: results per page (default 10)
+- offset: pagination offset
+
+RESPONSE:
+{
+    "code": 200,
+    "data": {
+        "profiles": [
+            {
+                "id": "profile_id",
+                "name": "John Doe",
+                "email": "john@example.com",
+                ...
+            }
+        ],
+        "meta": {
+            "count": 1,
+            "total": 150
+        }
+    }
+}
+
+Implementation: sourcing/services.py -> HrFlowService.search_profiles()
+
+
+# ============================================================================
+# WORKFLOW INTEGRATION
+# ============================================================================
+
+The complete workflow in SourcingService.process_job_offer():
+
+1. Extract search query from job description
+   - Use NLP to identify key requirements
+   - or use job title as fallback
+
+2. Call OpenClaw to search profiles
+   - Send query with relevant filters
+   - Get list of candidates with profile URLs
+
+3. For each candidate:
+   a. Create CandidateProfile entry
+   b. Parse profile using HrFlow
+   c. Score against job using HrFlow
+   d. Store score in CandidateScore
+
+4. Display ranked results to recruiter
+
+5. Optional: Collect feedback for ML refinement
+
+
+# ============================================================================
+# API KEY SETUP
+# ============================================================================
+
+To test the integration:
+
+1. Get API credentials:
+   - OpenClaw: https://openclaw.io/api
+   - HrFlow: https://api.hrflow.ai/
+
+2. Update .env file:
+   OPENCLAW_API_KEY=your_key_here
+   HRFLOW_API_KEY=your_key_here
+   HRFLOW_SOURCE_KEY=your_source_key_here
+
+3. Test in Django shell:
+   python manage.py shell
+   >>> from sourcing.services import OpenclawService, HrFlowService
+   >>> openclaw = OpenclawService()
+   >>> # Test OpenClaw connection
+   >>> hrflow = HrFlowService()
+   >>> # Test HrFlow connection
+
+
+# ============================================================================
+# QUICK REFERENCE
+# ============================================================================
+
+Files to modify:
+- sourcing/services.py -> OpenclawService.search_profiles()
+- sourcing/services.py -> HrFlowService.parse_profile()
+- sourcing/services.py -> HrFlowService.score_candidate()
+
+Configuration:
+- cv_killer/settings.py -> API endpoints and keys
+
+Testing:
+- python manage.py test sourcing
+- python manage.py shell
+
+# ============================================================================
+"""
