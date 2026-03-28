@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Building Smarter AI Apps: Prompt Engineering, RAG, and Real-Time LLM Integration &#8211; TechDrivenz</title>
+<meta name='robots' content='max-image-preview:large' />
+<meta name="viewport" content="width=device-width, initial-scale=1"><!-- Google tag (gtag.js) consent mode dataLayer added by Site Kit -->
+<script id="google_gtagjs-js-consent-mode-data-layer">
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {"ad_personalization":"denied","ad_storage":"denied","ad_user_data":"denied","analytics_storage":"denied","functionality_storage":"denied","security_storage":"denied","personalization_storage":"denied","region":["AT","BE","BG","CH","CY","CZ","DE","DK","EE","ES","FI","FR","GB","GR","HR","HU","IE","IS","IT","LI","LT","LU","LV","MT","NL","NO","PL","PT","RO","SE","SI","SK"],"wait_for_update":500});
+window._googlesitekitConsentCategoryMap = {"statistics":["analytics_storage"],"marketing":["ad_storage","ad_user_data","ad_personalization"],"functional":["functionality_storage","security_storage"],"preferences":["personalization_storage"]};
+window._googlesitekitConsents = {"ad_personalization":"denied","ad_storage":"denied","ad_user_data":"denied","analytics_storage":"denied","functionality_storage":"denied","security_storage":"denied","personalization_storage":"denied","region":["AT","BE","BG","CH","CY","CZ","DE","DK","EE","ES","FI","FR","GB","GR","HR","HU","IE","IS","IT","LI","LT","LU","LV","MT","NL","NO","PL","PT","RO","SE","SI","SK"],"wait_for_update":500};
+</script>
+<!-- End Google tag (gtag.js) consent mode dataLayer added by Site Kit -->
+<link rel='dns-prefetch' href='//www.googletagmanager.com' />
+<link href='https://fonts.gstatic.com' crossorigin rel='preconnect' />
+<link href='https://fonts.googleapis.com' crossorigin rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="TechDrivenz &raquo; Feed" href="https://techdrivenz.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="TechDrivenz &raquo; Comments Feed" href="https://techdrivenz.com/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="TechDrivenz &raquo; Building Smarter AI Apps: Prompt Engineering, RAG, and Real-Time LLM Integration Comments Feed" href="https://techdrivenz.com/building-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://techdrivenz.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Ftechdrivenz.com%2Fbuilding-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://techdrivenz.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Ftechdrivenz.com%2Fbuilding-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration%2F&#038;format=xml" />
+<style id='wp-img-auto-sizes-contain-inline-css'>
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+
+<style id='wp-emoji-styles-inline-css'>
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='https://techdrivenz.com/wp-includes/css/dist/block-library/style.min.css?ver=6.9.4' media='all' />
+
+<style id='wp-block-heading-inline-css'>
+h1:where(.wp-block-heading).has-background,h2:where(.wp-block-heading).has-background,h3:where(.wp-block-heading).has-background,h4:where(.wp-block-heading).has-background,h5:where(.wp-block-heading).has-background,h6:where(.wp-block-heading).has-background{padding:1.25em 2.375em}h1.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h1.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h2.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h2.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h3.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h3.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h4.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h4.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h5.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h5.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h6.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h6.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]){rotate:180deg}
+/*# sourceURL=https://techdrivenz.com/wp-includes/blocks/heading/style.min.css */
+</style>
+<style id='wp-block-list-inline-css'>
+ol,ul{box-sizing:border-box}:root :where(.wp-block-list.has-background){padding:1.25em 2.375em}
+/*# sourceURL=https://techdrivenz.com/wp-includes/blocks/list/style.min.css */
+</style>
+<style id='wp-block-code-inline-css'>
+.wp-block-code{box-sizing:border-box}.wp-block-code code{
+  /*!rtl:begin:ignore*/direction:ltr;display:block;font-family:inherit;overflow-wrap:break-word;text-align:initial;white-space:pre-wrap
+  /*!rtl:end:ignore*/}
+/*# sourceURL=https://techdrivenz.com/wp-includes/blocks/code/style.min.css */
+</style>
+<style id='wp-block-paragraph-inline-css'>
+.is-small-text{font-size:.875em}.is-regular-text{font-size:1em}.is-large-text{font-size:2.25em}.is-larger-text{font-size:3em}.has-drop-cap:not(:focus):first-letter{float:left;font-size:8.4em;font-style:normal;font-weight:100;line-height:.68;margin:.05em .1em 0 0;text-transform:uppercase}body.rtl .has-drop-cap:not(:focus):first-letter{float:none;margin-left:.1em}p.has-drop-cap.has-background{overflow:hidden}:root :where(p.has-background){padding:1.25em 2.375em}:where(p.has-text-color:not(.has-link-color)) a{color:inherit}p.has-text-align-left[style*="writing-mode:vertical-lr"],p.has-text-align-right[style*="writing-mode:vertical-rl"]{rotate:180deg}
+/*# sourceURL=https://techdrivenz.com/wp-includes/blocks/paragraph/style.min.css */
+</style>
+<style id='wp-block-table-inline-css'>
+.wp-block-table{overflow-x:auto}.wp-block-table table{border-collapse:collapse;width:100%}.wp-block-table thead{border-bottom:3px solid}.wp-block-table tfoot{border-top:3px solid}.wp-block-table td,.wp-block-table th{border:1px solid;padding:.5em}.wp-block-table .has-fixed-layout{table-layout:fixed;width:100%}.wp-block-table .has-fixed-layout td,.wp-block-table .has-fixed-layout th{word-break:break-word}.wp-block-table.aligncenter,.wp-block-table.alignleft,.wp-block-table.alignright{display:table;width:auto}.wp-block-table.aligncenter td,.wp-block-table.aligncenter th,.wp-block-table.alignleft td,.wp-block-table.alignleft th,.wp-block-table.alignright td,.wp-block-table.alignright th{word-break:break-word}.wp-block-table .has-subtle-light-gray-background-color{background-color:#f3f4f5}.wp-block-table .has-subtle-pale-green-background-color{background-color:#e9fbe5}.wp-block-table .has-subtle-pale-blue-background-color{background-color:#e7f5fe}.wp-block-table .has-subtle-pale-pink-background-color{background-color:#fcf0ef}.wp-block-table.is-style-stripes{background-color:initial;border-collapse:inherit;border-spacing:0}.wp-block-table.is-style-stripes tbody tr:nth-child(odd){background-color:#f0f0f0}.wp-block-table.is-style-stripes.has-subtle-light-gray-background-color tbody tr:nth-child(odd){background-color:#f3f4f5}.wp-block-table.is-style-stripes.has-subtle-pale-green-background-color tbody tr:nth-child(odd){background-color:#e9fbe5}.wp-block-table.is-style-stripes.has-subtle-pale-blue-background-color tbody tr:nth-child(odd){background-color:#e7f5fe}.wp-block-table.is-style-stripes.has-subtle-pale-pink-background-color tbody tr:nth-child(odd){background-color:#fcf0ef}.wp-block-table.is-style-stripes td,.wp-block-table.is-style-stripes th{border-color:#0000}.wp-block-table.is-style-stripes{border-bottom:1px solid #f0f0f0}.wp-block-table .has-border-color td,.wp-block-table .has-border-color th,.wp-block-table .has-border-color tr,.wp-block-table .has-border-color>*{border-color:inherit}.wp-block-table table[style*=border-top-color] tr:first-child,.wp-block-table table[style*=border-top-color] tr:first-child td,.wp-block-table table[style*=border-top-color] tr:first-child th,.wp-block-table table[style*=border-top-color]>*,.wp-block-table table[style*=border-top-color]>* td,.wp-block-table table[style*=border-top-color]>* th{border-top-color:inherit}.wp-block-table table[style*=border-top-color] tr:not(:first-child){border-top-color:initial}.wp-block-table table[style*=border-right-color] td:last-child,.wp-block-table table[style*=border-right-color] th,.wp-block-table table[style*=border-right-color] tr,.wp-block-table table[style*=border-right-color]>*{border-right-color:inherit}.wp-block-table table[style*=border-bottom-color] tr:last-child,.wp-block-table table[style*=border-bottom-color] tr:last-child td,.wp-block-table table[style*=border-bottom-color] tr:last-child th,.wp-block-table table[style*=border-bottom-color]>*,.wp-block-table table[style*=border-bottom-color]>* td,.wp-block-table table[style*=border-bottom-color]>* th{border-bottom-color:inherit}.wp-block-table table[style*=border-bottom-color] tr:not(:last-child){border-bottom-color:initial}.wp-block-table table[style*=border-left-color] td:first-child,.wp-block-table table[style*=border-left-color] th,.wp-block-table table[style*=border-left-color] tr,.wp-block-table table[style*=border-left-color]>*{border-left-color:inherit}.wp-block-table table[style*=border-style] td,.wp-block-table table[style*=border-style] th,.wp-block-table table[style*=border-style] tr,.wp-block-table table[style*=border-style]>*{border-style:inherit}.wp-block-table table[style*=border-width] td,.wp-block-table table[style*=border-width] th,.wp-block-table table[style*=border-width] tr,.wp-block-table table[style*=border-width]>*{border-style:inherit;border-width:inherit}
+/*# sourceURL=https://techdrivenz.com/wp-includes/blocks/table/style.min.css */
+</style>
+
+<style id='classic-theme-styles-inline-css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+<style id='global-styles-inline-css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--background: var(--background);--wp--preset--color--background-1: var(--background-1);--wp--preset--color--text-1: var(--text-1);--wp--preset--color--text-2: var(--text-2);--wp--preset--color--link-text: var(--link-text);--wp--preset--color--color-background: var(--color-background);--wp--preset--color--color-background-hover: var(--color-background-hover);--wp--preset--color--border-color: var(--border-color);--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='eztoc-css' href='https://techdrivenz.com/wp-content/plugins/easy-table-of-contents/assets/css/screen.min.css?ver=2.0.82.2' media='all' />
+<style id='eztoc-inline-css'>
+div#ez-toc-container .ez-toc-title {font-size: 120%;}div#ez-toc-container .ez-toc-title {font-weight: 500;}div#ez-toc-container ul li , div#ez-toc-container ul li a {font-size: 95%;}div#ez-toc-container ul li , div#ez-toc-container ul li a {font-weight: 500;}div#ez-toc-container nav ul ul li {font-size: 90%;}.ez-toc-box-title {font-weight: bold; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 1px; color: #666; padding-bottom: 5px;position:absolute;top:-4%;left:5%;background-color: inherit;transition: top 0.3s ease;}.ez-toc-box-title.toc-closed {top:-25%;}
+.ez-toc-container-direction {direction: ltr;}.ez-toc-counter ul{counter-reset: item ;}.ez-toc-counter nav ul li a::before {content: counters(item, '.', decimal) '. ';display: inline-block;counter-increment: item;flex-grow: 0;flex-shrink: 0;margin-right: .2em; float: left; }.ez-toc-widget-direction {direction: ltr;}.ez-toc-widget-container ul{counter-reset: item ;}.ez-toc-widget-container nav ul li a::before {content: counters(item, '.', decimal) '. ';display: inline-block;counter-increment: item;flex-grow: 0;flex-shrink: 0;margin-right: .2em; float: left; }
+/*# sourceURL=eztoc-inline-css */
+</style>
+<link rel='stylesheet' id='generate-comments-css' href='https://techdrivenz.com/wp-content/themes/generatepress/assets/css/components/comments.min.css?ver=3.6.1' media='all' />
+<link rel='stylesheet' id='generate-widget-areas-css' href='https://techdrivenz.com/wp-content/themes/generatepress/assets/css/components/widget-areas.min.css?ver=3.6.1' media='all' />
+<link rel='stylesheet' id='generate-style-css' href='https://techdrivenz.com/wp-content/themes/generatepress/assets/css/main.min.css?ver=3.6.1' media='all' />
+<style id='generate-style-inline-css'>
+.is-right-sidebar{width:30%;}.is-left-sidebar{width:25%;}.site-content .content-area{width:70%;}@media (max-width: 768px){.main-navigation .menu-toggle,.sidebar-nav-mobile:not(#sticky-placeholder){display:block;}.main-navigation ul,.gen-sidebar-nav,.main-navigation:not(.slideout-navigation):not(.toggled) .main-nav > ul,.has-inline-mobile-toggle #site-navigation .inside-navigation > *:not(.navigation-search):not(.main-nav){display:none;}.nav-align-right .inside-navigation,.nav-align-center .inside-navigation{justify-content:space-between;}}
+.dynamic-author-image-rounded{border-radius:100%;}.dynamic-featured-image, .dynamic-author-image{vertical-align:middle;}.one-container.blog .dynamic-content-template:not(:last-child), .one-container.archive .dynamic-content-template:not(:last-child){padding-bottom:0px;}.dynamic-entry-excerpt > p:last-child{margin-bottom:0px;}
+/*# sourceURL=generate-style-inline-css */
+</style>
+<link rel='stylesheet' id='generate-google-fonts-css' href='https://fonts.googleapis.com/css?family=Montserrat%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2Cregular%2Citalic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic&#038;display=auto&#038;ver=3.6.1' media='all' />
+<link rel='stylesheet' id='recent-posts-widget-with-thumbnails-public-style-css' href='https://techdrivenz.com/wp-content/plugins/recent-posts-widget-with-thumbnails/public.css?ver=7.1.1' media='all' />
+<link rel='stylesheet' id='generatepress-dynamic-css' href='https://techdrivenz.com/wp-content/uploads/generatepress/style.min.css?ver=1770388437' media='all' />
+<link rel='stylesheet' id='generate-child-css' href='https://techdrivenz.com/wp-content/themes/gp-blog-pro/style.css?ver=1711300465' media='all' />
+<style id='generateblocks-inline-css'>
+.gb-container-011f3282{min-height:90px;max-width:1200px;font-size:12px;text-align:center;margin-right:auto;margin-left:auto;background-color:#f8f8f8;}.gb-container-288a2da7{margin-top:30px;margin-bottom:30px;}.gb-container-b039e5d3{max-width:1200px;padding:10px;margin-right:auto;margin-left:auto;border-radius:7px;border:1px dashed var(--border-color);}.gb-container-e879c9ba{text-align:center;}.gb-grid-wrapper > .gb-grid-column-e879c9ba{width:25%;}.gb-grid-wrapper > .gb-grid-column-29901c33{width:75%;}.gb-container-8c9f6d82{padding-top:60px;padding-bottom:20px;margin-top:50px;background-color:#f4f4f4;}.gb-container-dda14c6f{max-width:1200px;padding-bottom:40px;margin-right:auto;margin-bottom:20px;margin-left:auto;border-bottom:1px solid var(--border-color);}.gb-grid-wrapper > .gb-grid-column-a2023d89{width:35%;}.gb-grid-wrapper > .gb-grid-column-570ab931{width:20%;}.gb-grid-wrapper > .gb-grid-column-2e0da1b4{width:20%;}.gb-grid-wrapper > .gb-grid-column-bdf05b11{width:20%;}.gb-container-da88e44f{min-height:90px;font-size:12px;text-align:center;background-color:#f8f8f8;}.gb-container-0b34743c{max-width:1200px;padding:20px;margin-right:auto;margin-left:auto;border:1px solid var(--border-color);}.gb-container-f1fa1469{display:inline-flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-start;column-gap:10px;row-gap:10px;margin-bottom:15px;}.gb-container-5c95afac{display:flex;flex-direction:row;justify-content:space-between;padding-top:8px;padding-bottom:8px;margin-right:10px;margin-bottom:20px;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);}.gb-container-5e3eb3de{display:flex;align-items:center;column-gap:15px;row-gap:10px;}.gb-container-4744de8f{min-height:90px;font-size:12px;text-align:center;margin-bottom:15px;background-color:#f8f8f8;}.gb-container-e595e85e{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;column-gap:10px;row-gap:10px;}.gb-container-4000f8f0{max-width:1200px;margin-right:auto;margin-left:auto;}.gb-container-f18591dd{height:220px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;position:relative;overflow-x:hidden;overflow-y:hidden;padding:10px 15px;border-radius:8px;}.gb-container-f18591dd:before{content:"";background-image:var(--background-image);background-repeat:no-repeat;background-position:center center;background-size:cover;z-index:0;position:absolute;top:0;right:0;bottom:0;left:0;transition:inherit;border-radius:8px;pointer-events:none;}.gb-container-f18591dd:after{content:"";background-image:linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.9) 80%);z-index:0;position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none;}.gb-grid-wrapper > .gb-grid-column-f18591dd{width:50%;}.gb-container-553faf02{min-height:300px;font-size:12px;text-align:center;margin-bottom:50px;background-color:#f8f8f8;}.gb-container-72dba350{padding:15px 15px 30px;margin-bottom:50px;border-radius:7px;border:1px solid var(--border-color);background-color:var(--background);}.gb-container-3c24bc37{margin:-30px 15px 30px;}.gb-grid-wrapper > .gb-grid-column-430b0838{width:100%;}.gb-container-7c1458f2{border-radius:7px;}.gb-grid-wrapper > .gb-grid-column-7c1458f2{width:30%;}.gb-grid-wrapper > .gb-grid-column-021d175c{width:70%;}.gb-container-10a64a88{padding:15px 15px 30px;margin-bottom:50px;border-radius:7px;border:1px solid var(--border-color);background-color:var(--background);}.gb-container-f546ede0{margin:-30px 15px 30px;}.gb-grid-wrapper-1692b177{display:flex;flex-wrap:wrap;row-gap:20px;margin-left:-20px;}.gb-grid-wrapper-1692b177 > .gb-grid-column{box-sizing:border-box;padding-left:20px;}.gb-grid-wrapper-a61c9b45{display:flex;flex-wrap:wrap;row-gap:40px;margin-left:-40px;}.gb-grid-wrapper-a61c9b45 > .gb-grid-column{box-sizing:border-box;padding-left:40px;}.gb-grid-wrapper-2cdbf465{display:flex;flex-wrap:wrap;row-gap:30px;margin-left:-30px;}.gb-grid-wrapper-2cdbf465 > .gb-grid-column{box-sizing:border-box;padding-left:30px;}.gb-grid-wrapper-0aa136df{display:flex;flex-wrap:wrap;row-gap:20px;}.gb-grid-wrapper-0aa136df > .gb-grid-column{box-sizing:border-box;}.gb-grid-wrapper-79ffc756{display:flex;flex-wrap:wrap;margin-left:-9px;}.gb-grid-wrapper-79ffc756 > .gb-grid-column{box-sizing:border-box;padding-left:9px;}.gb-image-686bd771{border-radius:100px;width:120px;height:120px;vertical-align:middle;}.gb-block-image-b3825931{margin-bottom:10px;}.gb-image-b3825931{width:160px;vertical-align:middle;}.gb-image-c7d5ff90{border-radius:50%;border:rgba(0, 0, 0, 0.15);width:40px;vertical-align:middle;}.gb-block-image-335d2ffd{margin-bottom:25px;text-align:center;}.gb-image-335d2ffd{border-radius:15px;width:100%;vertical-align:middle;}.gb-image-fa9bbfff{border-radius:7px;vertical-align:middle;}h2.gb-headline-f2f54d5c{font-size:24px;margin-bottom:10px;color:var(--text-1);}h2.gb-headline-f2f54d5c a{color:var(--text-1);}h2.gb-headline-f2f54d5c a:hover{color:var(--color-background-hover);}p.gb-headline-707876de{font-size:14px;color:var(--text-2);}p.gb-headline-3ea430c1{font-size:14px;font-weight:400;}h2.gb-headline-344e1515{display:inline-flex;font-size:18px;padding-bottom:2px;margin-bottom:15px;border-bottom:2px solid #262626;color:#262626;}div.gb-headline-b71967aa{display:flex;align-items:center;column-gap:0.5em;font-size:13px;font-weight:500;margin-bottom:4px;color:#303030;}div.gb-headline-b71967aa a{color:#303030;}div.gb-headline-b71967aa a:hover{color:var(--color-background-hover);}div.gb-headline-b71967aa .gb-icon{line-height:0;}div.gb-headline-b71967aa .gb-icon svg{width:1em;height:1em;fill:currentColor;}div.gb-headline-a9462c3e{display:flex;align-items:center;column-gap:0.5em;font-size:13px;font-weight:500;margin-bottom:4px;color:#303030;}div.gb-headline-a9462c3e a{color:#303030;}div.gb-headline-a9462c3e a:hover{color:var(--color-background-hover);}div.gb-headline-a9462c3e .gb-icon{line-height:0;}div.gb-headline-a9462c3e .gb-icon svg{width:1em;height:1em;fill:currentColor;}div.gb-headline-bd273e43{display:flex;align-items:center;column-gap:0.5em;font-size:13px;font-weight:500;margin-bottom:4px;color:#303030;}div.gb-headline-bd273e43 a{color:#303030;}div.gb-headline-bd273e43 a:hover{color:var(--color-background-hover);}div.gb-headline-bd273e43 .gb-icon{line-height:0;}div.gb-headline-bd273e43 .gb-icon svg{width:1em;height:1em;fill:currentColor;}div.gb-headline-68ad4cd5{display:flex;align-items:center;column-gap:0.5em;font-size:13px;font-weight:500;margin-bottom:4px;color:#303030;}div.gb-headline-68ad4cd5 a{color:#303030;}div.gb-headline-68ad4cd5 a:hover{color:var(--color-background-hover);}div.gb-headline-68ad4cd5 .gb-icon{line-height:0;}div.gb-headline-68ad4cd5 .gb-icon svg{width:1em;height:1em;fill:currentColor;}h2.gb-headline-9c7e94a7{display:inline-flex;font-size:18px;padding-bottom:2px;margin-bottom:15px;border-bottom:2px solid #262626;color:#262626;}div.gb-headline-e4946f6c{display:flex;align-items:center;column-gap:0.5em;font-size:13px;font-weight:500;margin-bottom:4px;color:#303030;}div.gb-headline-e4946f6c a{color:#303030;}div.gb-headline-e4946f6c a:hover{color:var(--color-background-hover);}div.gb-headline-e4946f6c .gb-icon{line-height:0;}div.gb-headline-e4946f6c .gb-icon svg{width:1em;height:1em;fill:currentColor;}div.gb-headline-f189184d{display:flex;align-items:center;column-gap:0.5em;font-size:13px;font-weight:500;margin-bottom:4px;color:#303030;}div.gb-headline-f189184d a{color:#303030;}div.gb-headline-f189184d a:hover{color:var(--color-background-hover);}div.gb-headline-f189184d .gb-icon{line-height:0;}div.gb-headline-f189184d .gb-icon svg{width:1em;height:1em;fill:currentColor;}div.gb-headline-ae4a8fcb{display:flex;align-items:center;column-gap:0.5em;font-size:13px;font-weight:500;margin-bottom:4px;color:#303030;}div.gb-headline-ae4a8fcb a{color:#303030;}div.gb-headline-ae4a8fcb a:hover{color:var(--color-background-hover);}div.gb-headline-ae4a8fcb .gb-icon{line-height:0;}div.gb-headline-ae4a8fcb .gb-icon svg{width:1em;height:1em;fill:currentColor;}div.gb-headline-d42b4229{display:flex;align-items:center;column-gap:0.5em;font-size:13px;font-weight:500;margin-bottom:4px;color:#303030;}div.gb-headline-d42b4229 a{color:#303030;}div.gb-headline-d42b4229 a:hover{color:var(--color-background-hover);}div.gb-headline-d42b4229 .gb-icon{line-height:0;}div.gb-headline-d42b4229 .gb-icon svg{width:1em;height:1em;fill:currentColor;}div.gb-headline-f72e479c{display:flex;align-items:center;column-gap:0.5em;font-size:13px;font-weight:500;margin-bottom:4px;color:#303030;}div.gb-headline-f72e479c a{color:#303030;}div.gb-headline-f72e479c a:hover{color:var(--color-background-hover);}div.gb-headline-f72e479c .gb-icon{line-height:0;}div.gb-headline-f72e479c .gb-icon svg{width:1em;height:1em;fill:currentColor;}h2.gb-headline-244cf330{display:inline-flex;font-size:18px;padding-bottom:2px;margin-bottom:15px;border-bottom:2px solid #262626;color:#262626;}div.gb-headline-72081d55{font-size:13px;font-weight:500;text-align:center;color:#303030;}h1.gb-headline-aa2f5b6b{font-weight:700;margin-bottom:15px;}p.gb-headline-65cf6a9d{font-size:13px;font-weight:600;margin-bottom:2px;color:var(--text-1);}p.gb-headline-65cf6a9d a{color:var(--text-1);}p.gb-headline-65cf6a9d a:hover{color:var(--text-1);}p.gb-headline-a5ae4d9f{font-size:12px;font-weight:500;margin-bottom:0px;color:var(--text-2);}p.gb-headline-a5ae4d9f a{color:var(--text-2);}p.gb-headline-a5ae4d9f a:hover{color:var(--text-2);}h2.gb-headline-b17bcb9e{font-weight:700;text-transform:uppercase;text-align:center;padding:6px 15px;border-radius:3px;color:var(--background);background-color:var(--text-1);}div.gb-headline-a7dab20c{display:flex;align-items:center;column-gap:0.5em;z-index:1;position:relative;font-size:10px;font-weight:500;margin-bottom:6px;color:#ffffff;}div.gb-headline-a7dab20c .gb-icon{line-height:0;}div.gb-headline-a7dab20c .gb-icon svg{width:1em;height:1em;fill:currentColor;}h2.gb-headline-3350c8c5{z-index:1;position:relative;font-size:16px;font-weight:600;margin-bottom:6px;color:#ffffff;}h2.gb-headline-3350c8c5 a{color:#ffffff;}h2.gb-headline-3350c8c5 a:hover{color:var(--color-background);}h2.gb-headline-608d3f43{display:inline-flex;font-size:20px;font-weight:700;text-transform:uppercase;padding:5px 30px;margin-bottom:0px;border-radius:50px;border:1.5px solid var(--text-1);background-color:var(--background);}h2.gb-headline-56e22905{font-size:14px;font-weight:500;margin-bottom:5px;color:var(--text-1);}h2.gb-headline-56e22905 a{color:var(--text-1);}h2.gb-headline-56e22905 a:hover{color:var(--color-background-hover);}div.gb-headline-9e059df5{font-size:10px;font-weight:400;color:var(--text-2);}h2.gb-headline-6be85365{display:inline-flex;font-size:20px;font-weight:700;text-transform:uppercase;padding:5px 30px;margin-bottom:0px;border-radius:50px;border:1.5px solid var(--text-1);color:var(--text-1);background-color:var(--background);}.gb-button-98395527{display:inline-flex;align-items:center;column-gap:0.5em;padding:12px;margin:5px;border-radius:3px;background-color:#2f2f2f;color:#ffffff;text-decoration:none;}.gb-button-98395527:hover, .gb-button-98395527:active, .gb-button-98395527:focus{background-color:#000000;color:#ffffff;}.gb-button-98395527 .gb-icon{line-height:0;}.gb-button-98395527 .gb-icon svg{width:1.5em;height:1.5em;fill:currentColor;}.gb-button-4bf77e9b{display:inline-flex;align-items:center;column-gap:0.5em;padding:12px;margin:5px;border-radius:3px;background-color:#2f2f2f;color:#ffffff;text-decoration:none;}.gb-button-4bf77e9b:hover, .gb-button-4bf77e9b:active, .gb-button-4bf77e9b:focus{background-color:#000000;color:#ffffff;}.gb-button-4bf77e9b .gb-icon{line-height:0;}.gb-button-4bf77e9b .gb-icon svg{width:1.5em;height:1.5em;fill:currentColor;}.gb-button-8da19ee3{display:inline-flex;align-items:center;column-gap:0.5em;padding:12px;margin:5px;border-radius:3px;background-color:#2f2f2f;color:#ffffff;text-decoration:none;}.gb-button-8da19ee3:hover, .gb-button-8da19ee3:active, .gb-button-8da19ee3:focus{background-color:#000000;color:#ffffff;}.gb-button-8da19ee3 .gb-icon{line-height:0;}.gb-button-8da19ee3 .gb-icon svg{width:1.5em;height:1.5em;fill:currentColor;}.gb-button-36c95caa{display:inline-flex;align-items:center;column-gap:0.5em;padding:12px;margin:5px;border-radius:3px;background-color:#2f2f2f;color:#ffffff;text-decoration:none;}.gb-button-36c95caa:hover, .gb-button-36c95caa:active, .gb-button-36c95caa:focus{background-color:#000000;color:#ffffff;}.gb-button-36c95caa .gb-icon{line-height:0;}.gb-button-36c95caa .gb-icon svg{width:1.5em;height:1.5em;fill:currentColor;}.gb-button-2a92613a{display:inline-flex;align-items:center;column-gap:0.5em;padding:12px;margin:5px;border-radius:3px;background-color:#2f2f2f;color:#ffffff;text-decoration:none;}.gb-button-2a92613a:hover, .gb-button-2a92613a:active, .gb-button-2a92613a:focus{background-color:#000000;color:#ffffff;}.gb-button-2a92613a .gb-icon{line-height:0;}.gb-button-2a92613a .gb-icon svg{width:1.5em;height:1.5em;fill:currentColor;}a.gb-button-aff0f743{display:inline-flex;align-items:center;column-gap:0.5em;font-size:12px;font-weight:500;padding:4px 13px 4px 14px;border-radius:14px;background-color:var(--color-background);color:var(--background);text-decoration:none;}a.gb-button-aff0f743:hover, a.gb-button-aff0f743:active, a.gb-button-aff0f743:focus{background-color:var(--color-background-hover);color:var(--background-1);}a.gb-button-aff0f743 .gb-icon{line-height:0;}a.gb-button-aff0f743 .gb-icon svg{width:1em;height:1em;fill:currentColor;}.gb-button-e9b1d4fe{display:inline-flex;align-items:center;column-gap:0.5em;padding:3px;color:var(--text-1);text-decoration:none;}.gb-button-e9b1d4fe:hover, .gb-button-e9b1d4fe:active, .gb-button-e9b1d4fe:focus{color:var(--color-background-hover);}.gb-button-e9b1d4fe .gb-icon{line-height:0;}.gb-button-e9b1d4fe .gb-icon svg{width:1.4em;height:1.4em;fill:currentColor;}a.gb-button-1f8c8b82{display:inline-flex;align-items:center;column-gap:0.5em;font-size:10px;font-weight:500;padding:3px 8px;border-radius:3px;border:1px solid var(--text-1);background-color:var(--background);color:var(--text-1);text-decoration:none;}a.gb-button-1f8c8b82:hover, a.gb-button-1f8c8b82:active, a.gb-button-1f8c8b82:focus{border-color:var(--color-background-hover);background-color:var(--background);color:var(--color-background-hover);}a.gb-button-1f8c8b82 .gb-icon{line-height:0;}a.gb-button-1f8c8b82 .gb-icon svg{width:1em;height:1em;fill:currentColor;}.gb-button-6bc6819a{display:flex;align-items:center;column-gap:0.5em;padding:8px 20px;margin:15px;border-radius:50px;background-color:#1878f2;color:#ffffff;text-decoration:none;background-image:linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.30));}.gb-button-6bc6819a:hover, .gb-button-6bc6819a:active, .gb-button-6bc6819a:focus{background-color:#126de4;color:#ffffff;}.gb-button-6bc6819a .gb-icon{line-height:0;}.gb-button-6bc6819a .gb-icon svg{width:1em;height:1em;fill:currentColor;}.gb-button-aba2c009{display:flex;align-items:center;column-gap:0.5em;padding:8px 20px;margin:15px;border-radius:50px;background-color:#e900d3;color:#ffffff;text-decoration:none;background-image:linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.30));}.gb-button-aba2c009:hover, .gb-button-aba2c009:active, .gb-button-aba2c009:focus{background-color:#d005bb;color:#ffffff;}.gb-button-aba2c009 .gb-icon{line-height:0;}.gb-button-aba2c009 .gb-icon svg{width:1em;height:1em;fill:currentColor;}.gb-button-af9a822f{display:flex;align-items:center;column-gap:0.5em;padding:8px 20px;margin:15px;border-radius:50px;background-color:#000000;color:#ffffff;text-decoration:none;background-image:linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.30));}.gb-button-af9a822f:hover, .gb-button-af9a822f:active, .gb-button-af9a822f:focus{background-color:#000000;color:#ffffff;}.gb-button-af9a822f .gb-icon{line-height:0;}.gb-button-af9a822f .gb-icon svg{width:1em;height:1em;fill:currentColor;}.gb-button-8e0eab06{display:flex;align-items:center;column-gap:0.5em;padding:8px 20px;margin:15px;border-radius:50px;background-color:#f60004;color:#ffffff;text-decoration:none;background-image:linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.30));}.gb-button-8e0eab06:hover, .gb-button-8e0eab06:active, .gb-button-8e0eab06:focus{background-color:#dc0004;color:#ffffff;}.gb-button-8e0eab06 .gb-icon{line-height:0;}.gb-button-8e0eab06 .gb-icon svg{width:1em;height:1em;fill:currentColor;}.gb-button-bdf6db94{display:flex;align-items:center;column-gap:0.5em;padding:8px 20px;margin:15px;border-radius:50px;background-color:#34ace0;color:#ffffff;text-decoration:none;background-image:linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.30));}.gb-button-bdf6db94:hover, .gb-button-bdf6db94:active, .gb-button-bdf6db94:focus{background-color:#1f95d3;color:#ffffff;}.gb-button-bdf6db94 .gb-icon{line-height:0;}.gb-button-bdf6db94 .gb-icon svg{width:1em;height:1em;fill:currentColor;}@media (max-width: 1024px) {.gb-container-288a2da7{margin-right:20px;margin-left:20px;}.gb-container-a2023d89{margin-right:25px;margin-left:25px;}.gb-grid-wrapper > .gb-grid-column-a2023d89{width:50%;}.gb-container-570ab931{margin-right:25px;margin-left:25px;}.gb-grid-wrapper > .gb-grid-column-570ab931{width:50%;}.gb-container-2e0da1b4{margin-right:25px;margin-left:25px;}.gb-grid-wrapper > .gb-grid-column-2e0da1b4{width:50%;}.gb-container-bdf05b11{margin-right:25px;margin-left:25px;}.gb-grid-wrapper > .gb-grid-column-bdf05b11{width:50%;}.gb-container-3359b6cc{margin-right:20px;margin-left:20px;}.gb-container-441ac919{margin-right:20px;margin-left:20px;}.gb-container-f18591dd{height:200px;}.gb-grid-wrapper > .gb-grid-column-f18591dd{width:50%;}.gb-grid-wrapper-a61c9b45{row-gap:40px;margin-left:-20px;}.gb-grid-wrapper-a61c9b45 > .gb-grid-column{padding-left:20px;}.gb-block-image-335d2ffd{text-align:center;}}@media (max-width: 767px) {.gb-container-e879c9ba{text-align:center;}.gb-grid-wrapper > .gb-grid-column-e879c9ba{width:100%;}.gb-container-29901c33{text-align:center;}.gb-grid-wrapper > .gb-grid-column-29901c33{width:100%;}.gb-grid-wrapper > .gb-grid-column-a2023d89{width:100%;}.gb-grid-wrapper > .gb-grid-column-570ab931{width:100%;}.gb-grid-wrapper > .gb-grid-column-2e0da1b4{width:100%;}.gb-grid-wrapper > .gb-grid-column-bdf05b11{width:100%;}.gb-container-0b34743c{padding:0;border:0px;}.gb-container-f18591dd{height:180px;border-radius:3px;}.gb-grid-wrapper > .gb-grid-column-f18591dd{width:100%;}.gb-container-f18591dd:before{border-radius:3px;}.gb-container-72dba350{margin-right:15px;margin-left:15px;}.gb-grid-wrapper > .gb-grid-column-7c1458f2{width:30%;}.gb-grid-wrapper > .gb-grid-column-021d175c{width:70%;}.gb-container-10a64a88{margin-right:15px;margin-left:15px;}.gb-grid-wrapper-a61c9b45{row-gap:40px;}.gb-grid-wrapper-2cdbf465{row-gap:20px;margin-left:-20px;}.gb-grid-wrapper-2cdbf465 > .gb-grid-column{padding-left:20px;}.gb-block-image-335d2ffd{text-align:center;}}:root{--gb-container-width:1200px;}.gb-container .wp-block-image img{vertical-align:middle;}.gb-grid-wrapper .wp-block-image{margin-bottom:0;}.gb-highlight{background:none;}.gb-shape{line-height:0;}
+/*# sourceURL=generateblocks-inline-css */
+</style>
+<link rel='stylesheet' id='generate-blog-images-css' href='https://techdrivenz.com/wp-content/plugins/gp-premium/blog/functions/css/featured-images.min.css?ver=2.4.0' media='all' />
+<link rel='stylesheet' id='generate-offside-css' href='https://techdrivenz.com/wp-content/plugins/gp-premium/menu-plus/functions/css/offside.min.css?ver=2.4.0' media='all' />
+<style id='generate-offside-inline-css'>
+:root{--gp-slideout-width:265px;}.slideout-navigation.main-navigation{background-color:var(--background);}.slideout-navigation.main-navigation .main-nav ul li a{color:var(--text-1);}.slideout-navigation.main-navigation ul ul{background-color:rgba(0,0,0,0);}.slideout-navigation.main-navigation .main-nav ul ul li a{color:var(--text-1);}.slideout-navigation.main-navigation .main-nav ul li:not([class*="current-menu-"]):hover > a, .slideout-navigation.main-navigation .main-nav ul li:not([class*="current-menu-"]):focus > a, .slideout-navigation.main-navigation .main-nav ul li.sfHover:not([class*="current-menu-"]) > a{background-color:rgba(0,0,0,0);}.slideout-navigation.main-navigation .main-nav ul ul li:not([class*="current-menu-"]):hover > a, .slideout-navigation.main-navigation .main-nav ul ul li:not([class*="current-menu-"]):focus > a, .slideout-navigation.main-navigation .main-nav ul ul li.sfHover:not([class*="current-menu-"]) > a{background-color:rgba(0,0,0,0);}.slideout-navigation.main-navigation .main-nav ul li[class*="current-menu-"] > a{background-color:rgba(0,0,0,0);}.slideout-navigation.main-navigation .main-nav ul ul li[class*="current-menu-"] > a{background-color:rgba(0,0,0,0);}.slideout-navigation, .slideout-navigation a{color:var(--text-1);}.slideout-navigation button.slideout-exit{color:var(--text-1);padding-left:20px;padding-right:20px;}.slide-opened nav.toggled .menu-toggle:before{display:none;}@media (max-width: 768px){.menu-bar-item.slideout-toggle{display:none;}}
+/*# sourceURL=generate-offside-inline-css */
+</style>
+<link rel='stylesheet' id='generate-navigation-branding-css' href='https://techdrivenz.com/wp-content/plugins/gp-premium/menu-plus/functions/css/navigation-branding-flex.min.css?ver=2.4.0' media='all' />
+<style id='generate-navigation-branding-inline-css'>
+.main-navigation.has-branding .inside-navigation.grid-container, .main-navigation.has-branding.grid-container .inside-navigation:not(.grid-container){padding:0px 30px 0px 30px;}.main-navigation.has-branding:not(.grid-container) .inside-navigation:not(.grid-container) .navigation-branding{margin-left:10px;}.navigation-branding img, .site-logo.mobile-header-logo img{height:60px;width:auto;}.navigation-branding .main-title{line-height:60px;}@media (max-width: 768px){.main-navigation.has-branding.nav-align-center .menu-bar-items, .main-navigation.has-sticky-branding.navigation-stick.nav-align-center .menu-bar-items{margin-left:auto;}.navigation-branding{margin-right:auto;margin-left:10px;}.navigation-branding .main-title, .mobile-header-navigation .site-logo{margin-left:10px;}.main-navigation.has-branding .inside-navigation.grid-container{padding:0px;}}
+/*# sourceURL=generate-navigation-branding-inline-css */
+</style>
+<script src="https://techdrivenz.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<script src="https://techdrivenz.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script>
+
+<!-- Google tag (gtag.js) snippet added by Site Kit -->
+<!-- Google Analytics snippet added by Site Kit -->
+<script src="https://www.googletagmanager.com/gtag/js?id=GT-WVG5Q4P" id="google_gtagjs-js" async></script>
+<script id="google_gtagjs-js-after">
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}
+gtag("set","linker",{"domains":["techdrivenz.com"]});
+gtag("js", new Date());
+gtag("set", "developer_id.dZTNiMT", true);
+gtag("config", "GT-WVG5Q4P", {"googlesitekit_post_type":"post"});
+//# sourceURL=google_gtagjs-js-after
+</script>
+<link rel="https://api.w.org/" href="https://techdrivenz.com/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://techdrivenz.com/wp-json/wp/v2/posts/675" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://techdrivenz.com/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 6.9.4" />
+<link rel="canonical" href="https://techdrivenz.com/building-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration/" />
+<link rel='shortlink' href='https://techdrivenz.com/?p=675' />
+<meta name="generator" content="Site Kit by Google 1.175.0" /><link rel="pingback" href="https://techdrivenz.com/xmlrpc.php">
+<link rel="icon" href="https://techdrivenz.com/wp-content/uploads/2024/03/cropped-android-chrome-512x512-1-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://techdrivenz.com/wp-content/uploads/2024/03/cropped-android-chrome-512x512-1-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://techdrivenz.com/wp-content/uploads/2024/03/cropped-android-chrome-512x512-1-180x180.png" />
+<meta name="msapplication-TileImage" content="https://techdrivenz.com/wp-content/uploads/2024/03/cropped-android-chrome-512x512-1-270x270.png" />
+</head>
+
+<body class="wp-singular post-template-default single single-post postid-675 single-format-standard wp-custom-logo wp-embed-responsive wp-theme-generatepress wp-child-theme-gp-blog-pro post-image-above-header post-image-aligned-center slideout-enabled slideout-mobile sticky-menu-no-transition sticky-enabled both-sticky-menu right-sidebar nav-below-header separate-containers header-aligned-left dropdown-hover featured-image-active" itemtype="https://schema.org/Blog" itemscope>
+	<style>
+#site-navigation{
+  margin-top:4px!important;
+}
+
+.wp-jankari-reading-meter {
+  position: fixed;
+  top: 0!important;
+  z-index: 1111;
+  width: 100%;
+  background-color: var(--background-1);
+}
+
+.wp-jankari-progress {
+  width: 100%;
+  height: 4px;  z-index: 1111;
+  background: var(--background-1);
+}
+
+.progress-bar {
+  height: 4px;
+	background-image: linear-gradient(to left, rgb(2 201 51), rgb(25 107 72));
+  width: 0%;
+}
+</style>
+
+<div class="wp-jankari-reading-meter">
+  <div class="wp-jankari-progress">
+    <div class="progress-bar" id="myBar"></div>
+  </div>  
+</div>
+
+<script> 
+window.onscroll = function() {myFunction()};
+function myFunction() {
+  var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  var scrolled = (winScroll / height) * 100;
+  document.getElementById("myBar").style.width = scrolled + "%";
+}
+</script><a class="screen-reader-text skip-link" href="#content" title="Skip to content">Skip to content</a>		<nav class="auto-hide-sticky has-branding main-navigation nav-align-right has-menu-bar-items sub-menu-right" id="site-navigation" aria-label="Primary"  itemtype="https://schema.org/SiteNavigationElement" itemscope>
+			<div class="inside-navigation grid-container">
+				<div class="navigation-branding"><div class="site-logo">
+						<a href="https://techdrivenz.com/" title="TechDrivenz" rel="home">
+							<img  class="header-image is-logo-image" alt="TechDrivenz" src="https://techdrivenz.com/wp-content/uploads/2024/03/cropped-Tech-4.png" title="TechDrivenz" srcset="https://techdrivenz.com/wp-content/uploads/2024/03/cropped-Tech-4.png 1x, https://techdrivenz.com/wp-content/uploads/2024/03/cropped-Tech-4.png 2x" width="403" height="125" />
+						</a>
+					</div></div>				<button class="menu-toggle" aria-controls="generate-slideout-menu" aria-expanded="false">
+					<span class="gp-icon icon-menu-bars"><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path d="M0 96c0-13.255 10.745-24 24-24h464c13.255 0 24 10.745 24 24s-10.745 24-24 24H24c-13.255 0-24-10.745-24-24zm0 160c0-13.255 10.745-24 24-24h464c13.255 0 24 10.745 24 24s-10.745 24-24 24H24c-13.255 0-24-10.745-24-24zm0 160c0-13.255 10.745-24 24-24h464c13.255 0 24 10.745 24 24s-10.745 24-24 24H24c-13.255 0-24-10.745-24-24z" /></svg><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path d="M71.029 71.029c9.373-9.372 24.569-9.372 33.942 0L256 222.059l151.029-151.03c9.373-9.372 24.569-9.372 33.942 0 9.372 9.373 9.372 24.569 0 33.942L289.941 256l151.03 151.029c9.372 9.373 9.372 24.569 0 33.942-9.373 9.372-24.569 9.372-33.942 0L256 289.941l-151.029 151.03c-9.373 9.372-24.569 9.372-33.942 0-9.372-9.373-9.372-24.569 0-33.942L222.059 256 71.029 104.971c-9.372-9.373-9.372-24.569 0-33.942z" /></svg></span><span class="mobile-menu">MENU</span>				</button>
+				<div id="primary-menu" class="main-nav"><ul id="menu-primary-menu" class=" menu sf-menu"><li id="menu-item-457" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-457"><a href="https://techdrivenz.com/">Home</a></li>
+<li id="menu-item-458" class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-458"><a href="https://techdrivenz.com/latest-post/">Latest Post</a></li>
+</ul></div><div class="menu-bar-items">	<span class="menu-bar-item">
+		<a href="#" role="button" aria-label="Open search" aria-haspopup="dialog" aria-controls="gp-search" data-gpmodal-trigger="gp-search"><span class="gp-icon icon-search"><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path fill-rule="evenodd" clip-rule="evenodd" d="M208 48c-88.366 0-160 71.634-160 160s71.634 160 160 160 160-71.634 160-160S296.366 48 208 48zM0 208C0 93.125 93.125 0 208 0s208 93.125 208 208c0 48.741-16.765 93.566-44.843 129.024l133.826 134.018c9.366 9.379 9.355 24.575-.025 33.941-9.379 9.366-24.575 9.355-33.941-.025L337.238 370.987C301.747 399.167 256.839 416 208 416 93.125 416 0 322.875 0 208z" /></svg><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path d="M71.029 71.029c9.373-9.372 24.569-9.372 33.942 0L256 222.059l151.029-151.03c9.373-9.372 24.569-9.372 33.942 0 9.372 9.373 9.372 24.569 0 33.942L289.941 256l151.03 151.029c9.372 9.373 9.372 24.569 0 33.942-9.373 9.372-24.569 9.372-33.942 0L256 289.941l-151.029 151.03c-9.373 9.372-24.569 9.372-33.942 0-9.372-9.373-9.372-24.569 0-33.942L222.059 256 71.029 104.971c-9.372-9.373-9.372-24.569 0-33.942z" /></svg></span></a>
+	</span>
+	</div>			</div>
+		</nav>
+		
+	<div class="site grid-container container hfeed" id="page">
+				<div class="site-content" id="content">
+			
+	<div class="content-area" id="primary">
+		<main class="site-main" id="main">
+			<div class="gb-container gb-container-50fc2988">
+<div class="gb-container gb-container-da88e44f">
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6301733247904991"
+     crossorigin="anonymous"></script>
+
+</div>
+</div><article id="post-675" class="dynamic-content-template post-675 post type-post status-publish format-standard has-post-thumbnail hentry category-generativeai tag-ai-integration tag-ai-integration-in-java-project tag-api-integration tag-chat-prompts tag-chatgpt-and-data-analysis tag-how-to-write-a-prompt-for-ai tag-how-to-write-a-prompt-for-llm tag-llm-and-rag-in-finance-domain tag-ollama-custom-prompts tag-prompt-engineering tag-prompt-engineering-course tag-prompt-engineering-full-course tag-prompt-template tag-software-engineering tag-software-engineering-jobs tag-structured-prompts tag-what-does-rag-stand-for tag-what-is-difference-ai-and-ai-agent"><div class="gb-container gb-container-3359b6cc posttemplate">
+<div class="gb-container gb-container-0b34743c">
+<div class="gb-container gb-container-f1fa1469">
+
+<a class="gb-button gb-button-aff0f743 post-term-item term-generativeai" href="https://techdrivenz.com/category/generativeai/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-lightning-charge-fill" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"></path> </svg></span><span class="gb-button-text">Generative AI</span></a>
+
+</div>
+
+<h1 class="gb-headline gb-headline-aa2f5b6b gb-headline-text">Building Smarter AI Apps: Prompt Engineering, RAG, and Real-Time LLM Integration</h1>
+
+<div class="gb-container gb-container-5c95afac">
+<div class="gb-container gb-container-5e3eb3de">
+<div class="gb-container gb-container-e00acf5e">
+<figure class="gb-block-image gb-block-image-c7d5ff90"><img alt='' src='https://secure.gravatar.com/avatar/631a1083d728692b4d86d54053f93367fd28c0cc4fa11a8b92c252f4c81e926d?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/631a1083d728692b4d86d54053f93367fd28c0cc4fa11a8b92c252f4c81e926d?s=80&#038;d=mm&#038;r=g 2x' class='avatar avatar-40 photo gb-image-c7d5ff90' height='40' width='40' decoding='async'/></figure>
+</div>
+
+<div class="gb-container gb-container-cb86326d">
+
+<p class="gb-headline gb-headline-65cf6a9d gb-headline-text">By <a href="https://techdrivenz.com/author/raj/">Raj K</a></p>
+
+
+
+<p class="gb-headline gb-headline-a5ae4d9f gb-headline-text">Published on: <time class="entry-date published" datetime="2025-06-10T20:40:19+00:00">June 10, 2025</time></p>
+
+</div>
+</div>
+
+
+<span class="gb-button gb-button-e9b1d4fe" id="mobileShareFloatingButton"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-box-arrow-up" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1z" fill-rule="evenodd"></path>   <path d="M7.646.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 1.707V10.5a.5.5 0 0 1-1 0V1.707L5.354 3.854a.5.5 0 1 1-.708-.708z" fill-rule="evenodd"></path> </svg></span></span>
+
+</div>
+
+<figure class="gb-block-image gb-block-image-335d2ffd"><img width="1280" height="720" src="https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration.png" class="gb-image-335d2ffd" alt="" decoding="async" fetchpriority="high" srcset="https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration.png 1280w, https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration-300x169.png 300w, https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration-1024x576.png 1024w, https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration-768x432.png 768w, https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration-150x84.png 150w" sizes="(max-width: 1280px) 100vw, 1280px" /></figure>
+
+<div class="gb-container gb-container-4744de8f">
+
+---Advertisement---
+
+</div>
+
+<div class="gb-container gb-container-0140f453">
+<div class="dynamic-entry-content">
+<p>In <a href="https://techdrivenz.com/curious-about-the-tech-behind-generative-ai-heres-what-developers-should-know/">Curious About the Tech Behind Generative AI? Here’s What Developers Should Know</a> and <a href="https://techdrivenz.com/advanced-generative-ai-for-developers-training-dynamics-model-fine-tuning-inference-optimization/">Advanced Generative AI for Developers: Training Dynamics, Model Fine-Tuning &amp; Inference Optimization</a>, we discussed neural networks, transformers, training dynamics, and model optimization. Now let’s shift gears into <strong>application development</strong>: how to <strong>get the most out of generative models</strong> without retraining them, and how to <strong>build AI-powered apps</strong> that respond in real time.</p>
+
+
+
+<p>This part covers:</p>
+
+
+
+<ul class="wp-block-list">
+<li>Prompt engineering (zero-shot, few-shot, chain-of-thought)</li>
+
+
+
+<li>Retrieval-Augmented Generation (RAG)</li>
+
+
+
+<li>Building full-stack real-time AI apps with open-source or hosted LLMs</li>
+</ul>
+
+
+
+<div id="ez-toc-container" class="ez-toc-v2_0_82_2 counter-hierarchy ez-toc-counter ez-toc-grey ez-toc-container-direction">
+<div class="ez-toc-title-container">
+<p class="ez-toc-title" style="cursor:inherit">Table of Contents</p>
+<span class="ez-toc-title-toggle"><a href="#" class="ez-toc-pull-right ez-toc-btn ez-toc-btn-xs ez-toc-btn-default ez-toc-toggle" aria-label="Toggle Table of Content"><span class="ez-toc-js-icon-con"><span class=""><span class="eztoc-hide" style="display:none;">Toggle</span><span class="ez-toc-icon-toggle-span"><svg style="fill: #999;color:#999" xmlns="http://www.w3.org/2000/svg" class="list-377408" width="20px" height="20px" viewBox="0 0 24 24" fill="none"><path d="M6 6H4v2h2V6zm14 0H8v2h12V6zM4 11h2v2H4v-2zm16 0H8v2h12v-2zM4 16h2v2H4v-2zm16 0H8v2h12v-2z" fill="currentColor"></path></svg><svg style="fill: #999;color:#999" class="arrow-unsorted-368013" xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" viewBox="0 0 24 24" version="1.2" baseProfile="tiny"><path d="M18.2 9.3l-6.2-6.3-6.2 6.3c-.2.2-.3.4-.3.7s.1.5.3.7c.2.2.4.3.7.3h11c.3 0 .5-.1.7-.3.2-.2.3-.5.3-.7s-.1-.5-.3-.7zM5.8 14.7l6.2 6.3 6.2-6.3c.2-.2.3-.5.3-.7s-.1-.5-.3-.7c-.2-.2-.4-.3-.7-.3h-11c-.3 0-.5.1-.7.3-.2.2-.3.5-.3.7s.1.5.3.7z"/></svg></span></span></span></a></span></div>
+<nav><ul class='ez-toc-list ez-toc-list-level-1 ' ><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-1" href="#Prompt_Engineering_%E2%80%94_Getting_More_from_LLMs_Without_Training" >Prompt Engineering — Getting More from LLMs Without Training</a><ul class='ez-toc-list-level-3' ><li class='ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-2" href="#Core_Prompting_Techniques" >Core Prompting Techniques</a><ul class='ez-toc-list-level-4' ><li class='ez-toc-heading-level-4'><a class="ez-toc-link ez-toc-heading-3" href="#Zero-Shot_Prompting" >Zero-Shot Prompting</a></li><li class='ez-toc-page-1 ez-toc-heading-level-4'><a class="ez-toc-link ez-toc-heading-4" href="#Few-Shot_Prompting" >Few-Shot Prompting</a></li><li class='ez-toc-page-1 ez-toc-heading-level-4'><a class="ez-toc-link ez-toc-heading-5" href="#Chain-of-Thought_Prompting_CoT" >Chain-of-Thought Prompting (CoT)</a></li><li class='ez-toc-page-1 ez-toc-heading-level-4'><a class="ez-toc-link ez-toc-heading-6" href="#Role-based_Prompts" >Role-based Prompts</a></li><li class='ez-toc-page-1 ez-toc-heading-level-4'><a class="ez-toc-link ez-toc-heading-7" href="#System_User_Assistant_Prompting" >System + User + Assistant Prompting</a></li></ul></li></ul></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-8" href="#Retrieval-Augmented_Generation_RAG_%E2%80%94_Inject_Knowledge_at_Runtime" >Retrieval-Augmented Generation (RAG) — Inject Knowledge at Runtime</a><ul class='ez-toc-list-level-3' ><li class='ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-9" href="#RAG_Architecture" >RAG Architecture</a></li><li class='ez-toc-page-1 ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-10" href="#Vector_Search_Tools" >Vector Search Tools</a></li><li class='ez-toc-page-1 ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-11" href="#How_to_Implement_RAG" >How to Implement RAG</a></li></ul></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-12" href="#Building_Real-Time_AI_Apps_with_LLMs" >Building Real-Time AI Apps with LLMs</a><ul class='ez-toc-list-level-3' ><li class='ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-13" href="#Typical_Stack_for_AI-Powered_Apps" >Typical Stack for AI-Powered Apps</a></li><li class='ez-toc-page-1 ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-14" href="#Hosting_Open-Source_Models" >Hosting Open-Source Models</a></li><li class='ez-toc-page-1 ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-15" href="#API_Integration" >API Integration</a></li><li class='ez-toc-page-1 ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-16" href="#Streaming_Tokens" >Streaming Tokens</a></li></ul></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-17" href="#Conclusion" >Conclusion</a><ul class='ez-toc-list-level-3' ><li class='ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-18" href="#Bonus_Tools_Repos_to_Explore" >Bonus: Tools &amp; Repos to Explore</a></li></ul></li></ul></nav></div>
+<h2 class="wp-block-heading"><span class="ez-toc-section" id="Prompt_Engineering_%E2%80%94_Getting_More_from_LLMs_Without_Training"></span>Prompt Engineering — Getting More from LLMs Without Training<span class="ez-toc-section-end"></span></h2>
+
+
+
+<p>Prompt engineering is the art of crafting effective input instructions to steer an LLM toward desired output — without retraining the model.</p>
+
+
+
+<h3 class="wp-block-heading"><span class="ez-toc-section" id="Core_Prompting_Techniques"></span><strong>Core Prompting Techniques</strong><span class="ez-toc-section-end"></span></h3>
+
+
+
+<h4 class="wp-block-heading"><span class="ez-toc-section" id="Zero-Shot_Prompting"></span><strong>Zero-Shot Prompting</strong><span class="ez-toc-section-end"></span></h4>
+
+
+
+<p>You ask the model to do something directly:</p>
+
+
+
+<pre class="wp-block-code"><code>"Translate this sentence into German: I am going to the airport."
+</code></pre>
+
+
+
+<h4 class="wp-block-heading"><span class="ez-toc-section" id="Few-Shot_Prompting"></span><strong>Few-Shot Prompting</strong><span class="ez-toc-section-end"></span></h4>
+
+
+
+<p>You provide a few examples in the prompt:</p>
+
+
+
+<pre class="wp-block-code"><code>"Translate the following:
+- English: I love pizza → German: Ich liebe Pizza
+- English: I am happy → German: Ich bin glücklich
+- English: She is tired → German:"
+</code></pre>
+
+
+
+<h4 class="wp-block-heading"><span class="ez-toc-section" id="Chain-of-Thought_Prompting_CoT"></span><strong>Chain-of-Thought Prompting (CoT)</strong><span class="ez-toc-section-end"></span></h4>
+
+
+
+<p>You encourage the model to reason step-by-step:</p>
+
+
+
+<pre class="wp-block-code"><code>"Q: A train leaves at 3 PM and takes 2 hours. What time will it arrive?
+Let's think step-by-step:"
+</code></pre>
+
+
+
+<h4 class="wp-block-heading"><span class="ez-toc-section" id="Role-based_Prompts"></span><strong>Role-based Prompts</strong><span class="ez-toc-section-end"></span></h4>
+
+
+
+<p>Give the model a persona:</p>
+
+
+
+<pre class="wp-block-code"><code>"You are a helpful travel guide. Help a tourist plan 3 days in Mallorca."
+</code></pre>
+
+
+
+<h4 class="wp-block-heading"><span class="ez-toc-section" id="System_User_Assistant_Prompting"></span><strong>System + User + Assistant Prompting</strong><span class="ez-toc-section-end"></span></h4>
+
+
+
+<p>In structured APIs (like OpenAI&#8217;s), prompts are broken into roles:</p>
+
+
+
+<pre class="wp-block-code"><code>&#91;
+  {"role": "system", "content": "You are a finance expert."},
+  {"role": "user", "content": "How should I invest 10,000 euros?"},
+]
+</code></pre>
+
+
+
+<h2 class="wp-block-heading"><span class="ez-toc-section" id="Retrieval-Augmented_Generation_RAG_%E2%80%94_Inject_Knowledge_at_Runtime"></span>Retrieval-Augmented Generation (RAG) — Inject Knowledge at Runtime<span class="ez-toc-section-end"></span></h2>
+
+
+
+<p>LLMs are trained on static data — they don’t &#8220;know&#8221; new or private information. <strong>RAG</strong> solves this by combining <strong>search + generation</strong> in real-time.</p>
+
+
+
+<h3 class="wp-block-heading"><span class="ez-toc-section" id="RAG_Architecture"></span>RAG Architecture<span class="ez-toc-section-end"></span></h3>
+
+
+
+<ol class="wp-block-list">
+<li><strong>Query</strong> → User asks a question</li>
+
+
+
+<li><strong>Retriever</strong> → Search your knowledge base (docs, PDFs, databases) using vector similarity (via FAISS, Weaviate, etc.)</li>
+
+
+
+<li><strong>Generator</strong> → The LLM generates an answer using both the question and retrieved documents</li>
+</ol>
+
+
+
+<h3 class="wp-block-heading"><span class="ez-toc-section" id="Vector_Search_Tools"></span>Vector Search Tools<span class="ez-toc-section-end"></span></h3>
+
+
+
+<ul class="wp-block-list">
+<li><strong>FAISS</strong>: Facebook’s efficient similarity search library</li>
+
+
+
+<li><strong>Weaviate</strong>: Scalable vector DB with REST/gRPC APIs</li>
+
+
+
+<li><strong>ChromaDB</strong>, <strong>Qdrant</strong>, <strong>Milvus</strong>: Other great options</li>
+</ul>
+
+
+
+<h3 class="wp-block-heading"><span class="ez-toc-section" id="How_to_Implement_RAG"></span>How to Implement RAG<span class="ez-toc-section-end"></span></h3>
+
+
+
+<ul class="wp-block-list">
+<li>Convert your content (PDFs, websites, CSVs) to text</li>
+
+
+
+<li>Chunk and embed it using models like <code>sentence-transformers</code> or <code>text-embedding-ada-002</code></li>
+
+
+
+<li>Store embeddings in a vector DB</li>
+
+
+
+<li>At runtime: search → retrieve → insert into prompt → call LLM</li>
+</ul>
+
+
+
+<p><strong>Frameworks:</strong></p>
+
+
+
+<ul class="wp-block-list">
+<li><a href="https://www.langchain.com/">LangChain</a></li>
+
+
+
+<li><a href="https://www.llamaindex.ai/">LlamaIndex</a></li>
+</ul>
+
+
+
+<h2 class="wp-block-heading"><span class="ez-toc-section" id="Building_Real-Time_AI_Apps_with_LLMs"></span>Building Real-Time AI Apps with LLMs<span class="ez-toc-section-end"></span></h2>
+
+
+
+<p>You can build apps using either <strong>hosted APIs</strong> (like OpenAI) or <strong>open-source models</strong> (like Mistral, LLaMA 3, Falcon).</p>
+
+
+
+<h3 class="wp-block-heading"><span class="ez-toc-section" id="Typical_Stack_for_AI-Powered_Apps"></span>Typical Stack for AI-Powered Apps<span class="ez-toc-section-end"></span></h3>
+
+
+
+<figure class="wp-block-table"><table class="has-fixed-layout"><thead><tr><th>Layer</th><th>Tools</th></tr></thead><tbody><tr><td>Frontend</td><td>React, Next.js, Svelte</td></tr><tr><td>Backend</td><td>FastAPI, Node.js, Django</td></tr><tr><td>LLM Access</td><td>OpenAI API, vLLM, LM Studio</td></tr><tr><td>RAG Engine</td><td>LangChain, LlamaIndex</td></tr><tr><td>Vector Store</td><td>FAISS, Weaviate, Chroma</td></tr><tr><td>Hosting</td><td>Cloudflare, AWS, Hugging Face Spaces</td></tr></tbody></table></figure>
+
+
+
+<h3 class="wp-block-heading"><span class="ez-toc-section" id="Hosting_Open-Source_Models"></span>Hosting Open-Source Models<span class="ez-toc-section-end"></span></h3>
+
+
+
+<p>Use:</p>
+
+
+
+<ul class="wp-block-list">
+<li><strong>Text Generation Inference (TGI)</strong> by Hugging Face</li>
+
+
+
+<li><strong>vLLM</strong> for ultra-fast LLM serving</li>
+
+
+
+<li><strong>LM Studio</strong> for local inference</li>
+</ul>
+
+
+
+<h3 class="wp-block-heading"><span class="ez-toc-section" id="API_Integration"></span>API Integration<span class="ez-toc-section-end"></span></h3>
+
+
+
+<p>Sample FastAPI wrapper:</p>
+
+
+
+<pre class="wp-block-code"><code>@app.post("/generate")
+async def generate_response(prompt: str):
+    response = model.generate(prompt, max_tokens=100)
+    return {"output": response}
+</code></pre>
+
+
+
+<h3 class="wp-block-heading"><span class="ez-toc-section" id="Streaming_Tokens"></span>Streaming Tokens<span class="ez-toc-section-end"></span></h3>
+
+
+
+<p>Use server-sent events (SSE) or WebSockets for streaming output in real-time chat apps:</p>
+
+
+
+<ul class="wp-block-list">
+<li><code>sse-starlette</code> (Python)</li>
+
+
+
+<li><code>react-use-sse</code> (JS)</li>
+
+
+
+<li><code>WebSocket</code> (for bi-directional comms)</li>
+</ul>
+
+
+
+<h2 class="wp-block-heading"><span class="ez-toc-section" id="Conclusion"></span>Conclusion<span class="ez-toc-section-end"></span></h2>
+
+
+
+<p>From Prompt to Production, by now, you’ve learned how to:</p>
+
+
+
+<ul class="wp-block-list">
+<li>Steer LLMs through <strong>prompt engineering</strong></li>
+
+
+
+<li>Expand their knowledge using <strong>retrieval-augmented generation</strong></li>
+
+
+
+<li>Build real-time, production-ready apps using <strong>hosted or open-source LLMs</strong></li>
+</ul>
+
+
+
+<p>This is the future of software: apps that <strong>think</strong>, <strong>talk</strong>, and <strong>adapt</strong> — powered by your understanding of how to mix neural networks, search, and smart prompts.</p>
+
+
+
+<h3 class="wp-block-heading"><span class="ez-toc-section" id="Bonus_Tools_Repos_to_Explore"></span>Bonus: Tools &amp; Repos to Explore<span class="ez-toc-section-end"></span></h3>
+
+
+
+<ul class="wp-block-list">
+<li><a href="https://github.com/hwchase17/langchain">LangChain Templates</a></li>
+
+
+
+<li><a href="https://github.com/jerryjliu/llama_index">LlamaIndex Starter Projects</a></li>
+
+
+
+<li><a href="https://github.com/togethercomputer/OpenChatKit">OpenChatKit</a></li>
+
+
+
+<li><a href="https://github.com/mckaywrigley/chatbot-ui">Chatbot UI (Next.js)</a></li>
+</ul>
+
+
+
+<p></p>
+</div>
+</div>
+
+<div class="gb-container gb-container-e595e85e">
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-ai-integration" href="https://techdrivenz.com/tag/ai-integration/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">ai integration</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-ai-integration-in-java-project" href="https://techdrivenz.com/tag/ai-integration-in-java-project/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">ai integration in java project</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-api-integration" href="https://techdrivenz.com/tag/api-integration/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">api integration</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-chat-prompts" href="https://techdrivenz.com/tag/chat-prompts/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">chat prompts</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-chatgpt-and-data-analysis" href="https://techdrivenz.com/tag/chatgpt-and-data-analysis/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">chatgpt and data analysis</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-how-to-write-a-prompt-for-ai" href="https://techdrivenz.com/tag/how-to-write-a-prompt-for-ai/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">how to write a prompt for ai</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-how-to-write-a-prompt-for-llm" href="https://techdrivenz.com/tag/how-to-write-a-prompt-for-llm/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">how to write a prompt for llm</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-llm-and-rag-in-finance-domain" href="https://techdrivenz.com/tag/llm-and-rag-in-finance-domain/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">llm and rag in finance domain</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-ollama-custom-prompts" href="https://techdrivenz.com/tag/ollama-custom-prompts/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">ollama custom prompts</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-prompt-engineering" href="https://techdrivenz.com/tag/prompt-engineering/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">prompt engineering</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-prompt-engineering-course" href="https://techdrivenz.com/tag/prompt-engineering-course/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">prompt engineering course</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-prompt-engineering-full-course" href="https://techdrivenz.com/tag/prompt-engineering-full-course/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">prompt engineering full course</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-prompt-template" href="https://techdrivenz.com/tag/prompt-template/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">prompt template</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-software-engineering" href="https://techdrivenz.com/tag/software-engineering/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">software engineering</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-software-engineering-jobs" href="https://techdrivenz.com/tag/software-engineering-jobs/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">software engineering jobs</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-structured-prompts" href="https://techdrivenz.com/tag/structured-prompts/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">structured prompts</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-what-does-rag-stand-for" href="https://techdrivenz.com/tag/what-does-rag-stand-for/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">what does rag stand for</span></a>
+
+<a class="gb-button gb-button-1f8c8b82 post-term-item term-what-is-difference-ai-and-ai-agent" href="https://techdrivenz.com/tag/what-is-difference-ai-and-ai-agent/"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-tag" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0"></path>   <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z"></path> </svg></span><span class="gb-button-text">what is difference ai and ai agent</span></a>
+
+</div>
+</div>
+</div></article><div class="wpjankari-social-wrapper">
+	<a class="wpjankari-social-sharing wpjankari-social-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftechdrivenz.com%2Fbuilding-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration%2F&text=Building+Smarter+AI+Apps%3A+Prompt+Engineering%2C+RAG%2C+and+Real-Time+LLM+Integration" target="_blank" rel="nofollow"><svg width="24" height="24" viewBox="-5 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>facebook [#ffffff]</title> <desc>Created with Sketch.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Dribbble-Light-Preview" transform="translate(-385.000000, -7399.000000)" fill="#ffffff"> <g id="icons" transform="translate(56.000000, 160.000000)"> <path d="M335.821282,7259 L335.821282,7250 L338.553693,7250 L339,7246 L335.821282,7246 L335.821282,7244.052 C335.821282,7243.022 335.847593,7242 337.286884,7242 L338.744689,7242 L338.744689,7239.14 C338.744689,7239.097 337.492497,7239 336.225687,7239 C333.580004,7239 331.923407,7240.657 331.923407,7243.7 L331.923407,7246 L329,7246 L329,7250 L331.923407,7250 L331.923407,7259 L335.821282,7259 Z" id="facebook-[#ffffff]"> </path> </g> </g> </g> </g></svg></a>
+	<a class="wpjankari-social-sharing wpjankari-social-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Ftechdrivenz.com%2Fbuilding-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration%2F&text=Building+Smarter+AI+Apps%3A+Prompt+Engineering%2C+RAG%2C+and+Real-Time+LLM+Integration" target="_blank" rel="nofollow"><svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" version="1.1"> <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/> </svg></a>
+	<a class="wpjankari-social-sharing wpjankari-social-whatsapp" href="https://api.whatsapp.com/send?text=Building+Smarter+AI+Apps%3A+Prompt+Engineering%2C+RAG%2C+and+Real-Time+LLM+Integration+https%3A%2F%2Ftechdrivenz.com%2Fbuilding-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration%2F" target="_blank" rel="nofollow"><svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M3.50002 12C3.50002 7.30558 7.3056 3.5 12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C10.3278 20.5 8.77127 20.0182 7.45798 19.1861C7.21357 19.0313 6.91408 18.9899 6.63684 19.0726L3.75769 19.9319L4.84173 17.3953C4.96986 17.0955 4.94379 16.7521 4.77187 16.4751C3.9657 15.176 3.50002 13.6439 3.50002 12ZM12 1.5C6.20103 1.5 1.50002 6.20101 1.50002 12C1.50002 13.8381 1.97316 15.5683 2.80465 17.0727L1.08047 21.107C0.928048 21.4637 0.99561 21.8763 1.25382 22.1657C1.51203 22.4552 1.91432 22.5692 2.28599 22.4582L6.78541 21.1155C8.32245 21.9965 10.1037 22.5 12 22.5C17.799 22.5 22.5 17.799 22.5 12C22.5 6.20101 17.799 1.5 12 1.5ZM14.2925 14.1824L12.9783 15.1081C12.3628 14.7575 11.6823 14.2681 10.9997 13.5855C10.2901 12.8759 9.76402 12.1433 9.37612 11.4713L10.2113 10.7624C10.5697 10.4582 10.6678 9.94533 10.447 9.53028L9.38284 7.53028C9.23954 7.26097 8.98116 7.0718 8.68115 7.01654C8.38113 6.96129 8.07231 7.046 7.84247 7.24659L7.52696 7.52195C6.76823 8.18414 6.3195 9.2723 6.69141 10.3741C7.07698 11.5163 7.89983 13.314 9.58552 14.9997C11.3991 16.8133 13.2413 17.5275 14.3186 17.8049C15.1866 18.0283 16.008 17.7288 16.5868 17.2572L17.1783 16.7752C17.4313 16.5691 17.5678 16.2524 17.544 15.9269C17.5201 15.6014 17.3389 15.308 17.0585 15.1409L15.3802 14.1409C15.0412 13.939 14.6152 13.9552 14.2925 14.1824Z" fill="#ffffff"></path> </g></svg></a>
+    <a class="wpjankari-social-sharing wpjankari-social-telegram" href="https://t.me/share/url?url=https%3A%2F%2Ftechdrivenz.com%2Fbuilding-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration%2F&text=Building+Smarter+AI+Apps%3A+Prompt+Engineering%2C+RAG%2C+and+Real-Time+LLM+Integration" target="_blank" rel="nofollow"><svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>telegram_line</title> <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Brand" transform="translate(-672.000000, -0.000000)"> <g id="telegram_line" transform="translate(672.000000, 0.000000)"> <path d="M24,0 L24,24 L0,24 L0,0 L24,0 Z M12.5934901,23.257841 L12.5819402,23.2595131 L12.5108777,23.2950439 L12.4918791,23.2987469 L12.4918791,23.2987469 L12.4767152,23.2950439 L12.4056548,23.2595131 C12.3958229,23.2563662 12.3870493,23.2590235 12.3821421,23.2649074 L12.3780323,23.275831 L12.360941,23.7031097 L12.3658947,23.7234994 L12.3769048,23.7357139 L12.4804777,23.8096931 L12.4953491,23.8136134 L12.4953491,23.8136134 L12.5071152,23.8096931 L12.6106902,23.7357139 L12.6232938,23.7196733 L12.6232938,23.7196733 L12.6266527,23.7031097 L12.609561,23.275831 C12.6075724,23.2657013 12.6010112,23.2592993 12.5934901,23.257841 L12.5934901,23.257841 Z M12.8583906,23.1452862 L12.8445485,23.1473072 L12.6598443,23.2396597 L12.6498822,23.2499052 L12.6498822,23.2499052 L12.6471943,23.2611114 L12.6650943,23.6906389 L12.6699349,23.7034178 L12.6699349,23.7034178 L12.678386,23.7104931 L12.8793402,23.8032389 C12.8914285,23.8068999 12.9022333,23.8029875 12.9078286,23.7952264 L12.9118235,23.7811639 L12.8776777,23.1665331 C12.8752882,23.1545897 12.8674102,23.1470016 12.8583906,23.1452862 L12.8583906,23.1452862 Z M12.1430473,23.1473072 C12.1332178,23.1423925 12.1221763,23.1452606 12.1156365,23.1525954 L12.1099173,23.1665331 L12.0757714,23.7811639 C12.0751323,23.7926639 12.0828099,23.8018602 12.0926481,23.8045676 L12.108256,23.8032389 L12.3092106,23.7104931 L12.3186497,23.7024347 L12.3186497,23.7024347 L12.3225043,23.6906389 L12.340401,23.2611114 L12.337245,23.2485176 L12.337245,23.2485176 L12.3277531,23.2396597 L12.1430473,23.1473072 Z" id="MingCute" fill-rule="nonzero"> </path> <path d="M21.8394,6.05639 C22.0315,4.8917 20.8652,3.97177 19.7773,4.42984 L2.67703,11.63 C1.48461,12.132 1.42351,13.8558 2.67788,14.3758 C3.60596,14.7605 5.02633,15.3246 6.45085,15.7943 C7.61932,16.1795 8.8931,16.5371 9.91353,16.6383 C10.1929,16.9725 10.5445,17.2935 10.9017,17.5872 C11.4487,18.0371 12.1074,18.5012 12.7873,18.9455 C14.1489,19.8352 15.6597,20.6865 16.678,21.2396 C17.8949,21.9006 19.3517,21.1395 19.5705,19.8131 L21.8394,6.05639 Z M4.59485,12.9925 L19.7186,6.62459 L17.6009,19.4649 C16.6024,18.9219 15.163,18.1087 13.8813,17.2713 C13.2329,16.8475 12.6407,16.4279 12.172,16.0425 C12.0051,15.9052 11.8638,15.7802 11.7461,15.6683 L15.7072,11.7071 C16.0977,11.3166 16.0977,10.6834 15.7072,10.2929 C15.3167,9.90237 14.6835,9.90237 14.293,10.2929 L9.95476,14.6311 C9.22132,14.5373 8.19888,14.2647 7.07709,13.8949 C6.21377,13.6102 5.34574,13.2869 4.59485,12.9925 Z" id="形状" fill="#ffffff"> </path> </g> </g> </g> </g></svg></a>
+	<a class="wpjankari-social-sharing wpjankari-social-more" id="wpjankari-social-more" href="#"><svg width="24px" height="24px" viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12.5 6.25C12.9142 6.25 13.25 5.91421 13.25 5.5C13.25 5.08579 12.9142 4.75 12.5 4.75V6.25ZM20.25 12.5C20.25 12.0858 19.9142 11.75 19.5 11.75C19.0858 11.75 18.75 12.0858 18.75 12.5H20.25ZM19.5 6.25C19.9142 6.25 20.25 5.91421 20.25 5.5C20.25 5.08579 19.9142 4.75 19.5 4.75V6.25ZM15.412 4.75C14.9978 4.75 14.662 5.08579 14.662 5.5C14.662 5.91421 14.9978 6.25 15.412 6.25V4.75ZM20.25 5.5C20.25 5.08579 19.9142 4.75 19.5 4.75C19.0858 4.75 18.75 5.08579 18.75 5.5H20.25ZM18.75 9.641C18.75 10.0552 19.0858 10.391 19.5 10.391C19.9142 10.391 20.25 10.0552 20.25 9.641H18.75ZM20.0303 6.03033C20.3232 5.73744 20.3232 5.26256 20.0303 4.96967C19.7374 4.67678 19.2626 4.67678 18.9697 4.96967L20.0303 6.03033ZM11.9697 11.9697C11.6768 12.2626 11.6768 12.7374 11.9697 13.0303C12.2626 13.3232 12.7374 13.3232 13.0303 13.0303L11.9697 11.9697ZM12.5 4.75H9.5V6.25H12.5V4.75ZM9.5 4.75C6.87665 4.75 4.75 6.87665 4.75 9.5H6.25C6.25 7.70507 7.70507 6.25 9.5 6.25V4.75ZM4.75 9.5V15.5H6.25V9.5H4.75ZM4.75 15.5C4.75 18.1234 6.87665 20.25 9.5 20.25V18.75C7.70507 18.75 6.25 17.2949 6.25 15.5H4.75ZM9.5 20.25H15.5V18.75H9.5V20.25ZM15.5 20.25C18.1234 20.25 20.25 18.1234 20.25 15.5H18.75C18.75 17.2949 17.2949 18.75 15.5 18.75V20.25ZM20.25 15.5V12.5H18.75V15.5H20.25ZM19.5 4.75H15.412V6.25H19.5V4.75ZM18.75 5.5V9.641H20.25V5.5H18.75ZM18.9697 4.96967L11.9697 11.9697L13.0303 13.0303L20.0303 6.03033L18.9697 4.96967Z" fill="#ffffff"></path> </g></svg></a>
+</div>
+
+<script>
+    document.getElementById("wpjankari-social-more").addEventListener("click", function (e) {
+        var t;
+        e.preventDefault();
+        console.log("Button clicked."); // Add this line for debugging
+        if (navigator.share) {
+            t = document.title;
+            e = window.location.href;
+            navigator.share({ title: t, url: e })
+                .then(() => {
+                    console.log("Share successful for share-button.");
+                })
+                .catch(e => {
+                    console.error("Share failed for share-button:", e);
+                });
+        } else {
+            alert("Share functionality is not supported in this browser.");
+        }
+    });
+</script><div class="gb-container gb-container-288a2da7">
+<div class="gb-container gb-container-b039e5d3">
+<div class="gb-grid-wrapper gb-grid-wrapper-1692b177">
+<div class="gb-grid-column gb-grid-column-e879c9ba"><div class="gb-container gb-container-e879c9ba">
+<figure class="gb-block-image gb-block-image-686bd771"><img alt='' src='https://secure.gravatar.com/avatar/631a1083d728692b4d86d54053f93367fd28c0cc4fa11a8b92c252f4c81e926d?s=120&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/631a1083d728692b4d86d54053f93367fd28c0cc4fa11a8b92c252f4c81e926d?s=240&#038;d=mm&#038;r=g 2x' class='avatar avatar-120 photo gb-image-686bd771' height='120' width='120' loading='lazy' decoding='async'/></figure>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-29901c33"><div class="gb-container gb-container-29901c33">
+<h2 class="gb-headline gb-headline-f2f54d5c gb-headline-text"><a href="https://techdrivenz.com/author/raj/">Raj K</a></h2>
+
+<p class="gb-headline gb-headline-707876de gb-headline-text">Meet Raj K! With over a decade of experience in tech consulting across Europe, Raj brings a wealth of expertise to this blog. Holding degrees in Metallurgy &amp; Materials Engineering and Physics, his diverse background fuels his passion for all tech things. Raj's unique blend of technical know-how, entrepreneurial spirit, and hands-on experience makes him an invaluable asset to this blog and the tech world at large.</p>
+</div></div>
+</div>
+</div>
+</div><div class="gb-container gb-container-4ecf640d">
+<div class="gb-container gb-container-011f3282">
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6301733247904991"
+     crossorigin="anonymous"></script>
+
+</div>
+</div><div class="gb-container gb-container-441ac919">
+<div class="gb-container gb-container-4000f8f0">
+
+<h2 class="gb-headline gb-headline-b17bcb9e gb-headline-text">Related Post</h2>
+
+
+
+<div class="gb-grid-wrapper gb-grid-wrapper-2cdbf465 gb-query-loop-wrapper"></div>
+
+</div>
+</div>
+			<div class="comments-area">
+				<div id="comments">
+
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Comment <small><a rel="nofollow" id="cancel-comment-reply-link" href="/building-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration/#respond" style="display:none;">Cancel reply</a></small></h3><form action="https://techdrivenz.com/wp-comments-post.php" method="post" id="commentform" class="comment-form"><p class="comment-form-comment"><label for="comment" class="screen-reader-text">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" required></textarea></p><label for="author" class="screen-reader-text">Name</label><input placeholder="Name *" id="author" name="author" type="text" value="" size="30" required />
+<label for="email" class="screen-reader-text">Email</label><input placeholder="Email *" id="email" name="email" type="email" value="" size="30" required />
+<label for="url" class="screen-reader-text">Website</label><input placeholder="Website" id="url" name="url" type="url" value="" size="30" />
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Post Comment" /> <input type='hidden' name='comment_post_ID' value='675' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p></form>	</div><!-- #respond -->
+	
+</div><!-- #comments -->
+			</div>
+
+					</main>
+	</div>
+
+	<div class="widget-area sidebar is-right-sidebar" id="right-sidebar">
+	<div class="inside-right-sidebar">
+		<div class="gb-container gb-container-553faf02">
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6301733247904991"
+     crossorigin="anonymous"></script>
+
+</div>
+
+<div class="gb-container gb-container-72dba350">
+<div class="gb-container gb-container-3c24bc37">
+
+<h2 class="gb-headline gb-headline-608d3f43 gb-headline-text">Recent Posts</h2>
+
+</div>
+
+
+<div class="gb-grid-wrapper gb-grid-wrapper-0aa136df gb-query-loop-wrapper">
+<div class="gb-grid-column gb-grid-column-430b0838 gb-query-loop-item post-699 post type-post status-publish format-standard has-post-thumbnail hentry category-smartphones tag-airplay tag-best-screen-mirroring-apps-ios-2025 tag-best-way-to-screen-share-iphone-on-macbook-2025 tag-discover-the-top-methods-for-iphone-mirroring-in-2025 tag-how-to-mirror-iphone-to-mac-using-quicktime tag-how-to-use-airplay-in-2025 tag-iphone-mirroring tag-iphone-to-tv-screen-mirroring tag-learn-how-to-mirror-your-iphone-screen-to-mac-windows-smart-tv-or-apple-tv-with-the-best-tools-and-apps-available tag-mirror-iphone-to-pc tag-screen-mirroring-iphone-to-mac tag-screen-mirroring-iphone-to-samsung-tv"><div class="gb-container gb-container-430b0838">
+<div class="gb-grid-wrapper gb-grid-wrapper-79ffc756">
+<div class="gb-grid-column gb-grid-column-7c1458f2"><div class="gb-container gb-container-7c1458f2">
+<figure class="gb-block-image gb-block-image-fa9bbfff"><a href="https://techdrivenz.com/iphone-mirroring-in-2025-best-tools-methods-for-screen-sharing/"><img width="1280" height="720" src="https://techdrivenz.com/wp-content/uploads/2025/06/iPhone-Mirroring-in-2025-Best-Tools-Methods-for-Screen-Sharing.png" class="gb-image-fa9bbfff" alt="" decoding="async" loading="lazy" srcset="https://techdrivenz.com/wp-content/uploads/2025/06/iPhone-Mirroring-in-2025-Best-Tools-Methods-for-Screen-Sharing.png 1280w, https://techdrivenz.com/wp-content/uploads/2025/06/iPhone-Mirroring-in-2025-Best-Tools-Methods-for-Screen-Sharing-300x169.png 300w, https://techdrivenz.com/wp-content/uploads/2025/06/iPhone-Mirroring-in-2025-Best-Tools-Methods-for-Screen-Sharing-1024x576.png 1024w, https://techdrivenz.com/wp-content/uploads/2025/06/iPhone-Mirroring-in-2025-Best-Tools-Methods-for-Screen-Sharing-768x432.png 768w, https://techdrivenz.com/wp-content/uploads/2025/06/iPhone-Mirroring-in-2025-Best-Tools-Methods-for-Screen-Sharing-150x84.png 150w" sizes="auto, (max-width: 1280px) 100vw, 1280px" /></a></figure>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-021d175c"><div class="gb-container gb-container-021d175c">
+<h2 class="gb-headline gb-headline-56e22905 gb-headline-text"><a href="https://techdrivenz.com/iphone-mirroring-in-2025-best-tools-methods-for-screen-sharing/">iPhone Mirroring in 2025: Best Tools &amp; Methods for Screen Sharing</a></h2>
+
+<div class="gb-headline gb-headline-9e059df5 gb-headline-text"><time class="entry-date published" datetime="2025-06-12T23:23:15+00:00">June 12, 2025</time></div>
+</div></div>
+</div>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-430b0838 gb-query-loop-item post-696 post type-post status-publish format-standard has-post-thumbnail hentry category-generativeai tag-ai-coding-tools tag-ai-coding-tools-2025 tag-ai-coding-tools-for-developers tag-ai-tools-for-developers tag-ai-tools-for-developers-2025 tag-best-5-vibe-coding-ai-tools-in-2025 tag-best-ai-coding-tools-for-2025 tag-best-ai-coding-tools-for-developers tag-best-ai-for-coding tag-best-ai-model-for-coding tag-best-coding-tools-2025 tag-coding tag-coding-for-beginners tag-coding-tools-2025 tag-developers-in-2025 tag-pieces-for-developers tag-top-5-ai-tools-for-developers-in-2025"><div class="gb-container gb-container-430b0838">
+<div class="gb-grid-wrapper gb-grid-wrapper-79ffc756">
+<div class="gb-grid-column gb-grid-column-7c1458f2"><div class="gb-container gb-container-7c1458f2">
+<figure class="gb-block-image gb-block-image-fa9bbfff"><a href="https://techdrivenz.com/the-best-model-for-chatgpt-coding-in-2025/"><img width="1280" height="720" src="https://techdrivenz.com/wp-content/uploads/2025/06/The-Best-Model-for-ChatGPT-Coding-in-2025.png" class="gb-image-fa9bbfff" alt="" decoding="async" loading="lazy" srcset="https://techdrivenz.com/wp-content/uploads/2025/06/The-Best-Model-for-ChatGPT-Coding-in-2025.png 1280w, https://techdrivenz.com/wp-content/uploads/2025/06/The-Best-Model-for-ChatGPT-Coding-in-2025-300x169.png 300w, https://techdrivenz.com/wp-content/uploads/2025/06/The-Best-Model-for-ChatGPT-Coding-in-2025-1024x576.png 1024w, https://techdrivenz.com/wp-content/uploads/2025/06/The-Best-Model-for-ChatGPT-Coding-in-2025-768x432.png 768w, https://techdrivenz.com/wp-content/uploads/2025/06/The-Best-Model-for-ChatGPT-Coding-in-2025-150x84.png 150w" sizes="auto, (max-width: 1280px) 100vw, 1280px" /></a></figure>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-021d175c"><div class="gb-container gb-container-021d175c">
+<h2 class="gb-headline gb-headline-56e22905 gb-headline-text"><a href="https://techdrivenz.com/the-best-model-for-chatgpt-coding-in-2025/">The Best Model for ChatGPT Coding in 2025</a></h2>
+
+<div class="gb-headline gb-headline-9e059df5 gb-headline-text"><time class="entry-date published" datetime="2025-06-12T22:30:31+00:00">June 12, 2025</time></div>
+</div></div>
+</div>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-430b0838 gb-query-loop-item post-675 post type-post status-publish format-standard has-post-thumbnail hentry category-generativeai tag-ai-integration tag-ai-integration-in-java-project tag-api-integration tag-chat-prompts tag-chatgpt-and-data-analysis tag-how-to-write-a-prompt-for-ai tag-how-to-write-a-prompt-for-llm tag-llm-and-rag-in-finance-domain tag-ollama-custom-prompts tag-prompt-engineering tag-prompt-engineering-course tag-prompt-engineering-full-course tag-prompt-template tag-software-engineering tag-software-engineering-jobs tag-structured-prompts tag-what-does-rag-stand-for tag-what-is-difference-ai-and-ai-agent"><div class="gb-container gb-container-430b0838">
+<div class="gb-grid-wrapper gb-grid-wrapper-79ffc756">
+<div class="gb-grid-column gb-grid-column-7c1458f2"><div class="gb-container gb-container-7c1458f2">
+<figure class="gb-block-image gb-block-image-fa9bbfff"><a href="https://techdrivenz.com/building-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration/"><img width="1280" height="720" src="https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration.png" class="gb-image-fa9bbfff" alt="" decoding="async" loading="lazy" srcset="https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration.png 1280w, https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration-300x169.png 300w, https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration-1024x576.png 1024w, https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration-768x432.png 768w, https://techdrivenz.com/wp-content/uploads/2025/06/Building-Smarter-AI-Apps-Prompt-Engineering-RAG-and-Real-Time-LLM-Integration-150x84.png 150w" sizes="auto, (max-width: 1280px) 100vw, 1280px" /></a></figure>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-021d175c"><div class="gb-container gb-container-021d175c">
+<h2 class="gb-headline gb-headline-56e22905 gb-headline-text"><a href="https://techdrivenz.com/building-smarter-ai-apps-prompt-engineering-rag-and-real-time-llm-integration/">Building Smarter AI Apps: Prompt Engineering, RAG, and Real-Time LLM Integration</a></h2>
+
+<div class="gb-headline gb-headline-9e059df5 gb-headline-text"><time class="entry-date published" datetime="2025-06-10T20:40:19+00:00">June 10, 2025</time></div>
+</div></div>
+</div>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-430b0838 gb-query-loop-item post-670 post type-post status-publish format-standard has-post-thumbnail hentry category-generativeai tag-advanced-ai-model tag-ai-model-fine-tuning tag-fine-tuning-large-language-models tag-generative-adversarial-networks tag-generative-ai tag-generative-ai-course tag-generative-ai-course-for-beginners tag-generative-ai-explained tag-generative-ai-for-beginners tag-generative-ai-full-course tag-generative-ai-skills-for-interviews tag-generative-ai-training-course tag-generative-ai-tutorial tag-generative-ai-tutorial-for-beginners tag-generative-ai-use-cases tag-large-language-models tag-transformer-models"><div class="gb-container gb-container-430b0838">
+<div class="gb-grid-wrapper gb-grid-wrapper-79ffc756">
+<div class="gb-grid-column gb-grid-column-7c1458f2"><div class="gb-container gb-container-7c1458f2">
+<figure class="gb-block-image gb-block-image-fa9bbfff"><a href="https://techdrivenz.com/advanced-generative-ai-for-developers-training-dynamics-model-fine-tuning-inference-optimization/"><img width="1280" height="720" src="https://techdrivenz.com/wp-content/uploads/2025/06/Advanced-Generative-AI-for-Developers-Training-Dynamics-Model-Fine-Tuning-Inference-Optimization.png" class="gb-image-fa9bbfff" alt="" decoding="async" loading="lazy" srcset="https://techdrivenz.com/wp-content/uploads/2025/06/Advanced-Generative-AI-for-Developers-Training-Dynamics-Model-Fine-Tuning-Inference-Optimization.png 1280w, https://techdrivenz.com/wp-content/uploads/2025/06/Advanced-Generative-AI-for-Developers-Training-Dynamics-Model-Fine-Tuning-Inference-Optimization-300x169.png 300w, https://techdrivenz.com/wp-content/uploads/2025/06/Advanced-Generative-AI-for-Developers-Training-Dynamics-Model-Fine-Tuning-Inference-Optimization-1024x576.png 1024w, https://techdrivenz.com/wp-content/uploads/2025/06/Advanced-Generative-AI-for-Developers-Training-Dynamics-Model-Fine-Tuning-Inference-Optimization-768x432.png 768w, https://techdrivenz.com/wp-content/uploads/2025/06/Advanced-Generative-AI-for-Developers-Training-Dynamics-Model-Fine-Tuning-Inference-Optimization-150x84.png 150w" sizes="auto, (max-width: 1280px) 100vw, 1280px" /></a></figure>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-021d175c"><div class="gb-container gb-container-021d175c">
+<h2 class="gb-headline gb-headline-56e22905 gb-headline-text"><a href="https://techdrivenz.com/advanced-generative-ai-for-developers-training-dynamics-model-fine-tuning-inference-optimization/">Advanced Generative AI for Developers: Training Dynamics, Model Fine-Tuning &amp; Inference Optimization</a></h2>
+
+<div class="gb-headline gb-headline-9e059df5 gb-headline-text"><time class="entry-date published" datetime="2025-06-10T20:29:55+00:00">June 10, 2025</time></div>
+</div></div>
+</div>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-430b0838 gb-query-loop-item post-667 post type-post status-publish format-standard has-post-thumbnail hentry category-generativeai tag-generative-ai tag-generative-ai-course tag-generative-ai-explained tag-generative-ai-for-beginners tag-generative-ai-full-course tag-generative-ai-use-cases tag-generative-artificial-intelligence tag-how-to-become-generative-ai-expert-in-2025 tag-how-to-use-generative-ai tag-introduction-to-generative-ai-course tag-the-power-of-eureka-technology tag-top-20-new-technology-trends-that-will-define-the-future tag-what-is-generative-ai tag-what-is-generative-ai-and-how-does-it-work"><div class="gb-container gb-container-430b0838">
+<div class="gb-grid-wrapper gb-grid-wrapper-79ffc756">
+<div class="gb-grid-column gb-grid-column-7c1458f2"><div class="gb-container gb-container-7c1458f2">
+<figure class="gb-block-image gb-block-image-fa9bbfff"><a href="https://techdrivenz.com/curious-about-the-tech-behind-generative-ai-heres-what-developers-should-know/"><img width="1280" height="720" src="https://techdrivenz.com/wp-content/uploads/2025/06/Curious-About-the-Tech-Behind-Generative-AI-Heres-What-Developers-Should-Know.png" class="gb-image-fa9bbfff" alt="" decoding="async" loading="lazy" srcset="https://techdrivenz.com/wp-content/uploads/2025/06/Curious-About-the-Tech-Behind-Generative-AI-Heres-What-Developers-Should-Know.png 1280w, https://techdrivenz.com/wp-content/uploads/2025/06/Curious-About-the-Tech-Behind-Generative-AI-Heres-What-Developers-Should-Know-300x169.png 300w, https://techdrivenz.com/wp-content/uploads/2025/06/Curious-About-the-Tech-Behind-Generative-AI-Heres-What-Developers-Should-Know-1024x576.png 1024w, https://techdrivenz.com/wp-content/uploads/2025/06/Curious-About-the-Tech-Behind-Generative-AI-Heres-What-Developers-Should-Know-768x432.png 768w, https://techdrivenz.com/wp-content/uploads/2025/06/Curious-About-the-Tech-Behind-Generative-AI-Heres-What-Developers-Should-Know-150x84.png 150w" sizes="auto, (max-width: 1280px) 100vw, 1280px" /></a></figure>
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-021d175c"><div class="gb-container gb-container-021d175c">
+<h2 class="gb-headline gb-headline-56e22905 gb-headline-text"><a href="https://techdrivenz.com/curious-about-the-tech-behind-generative-ai-heres-what-developers-should-know/">Curious About the Tech Behind Generative AI? Here&#8217;s What Developers Should Know</a></h2>
+
+<div class="gb-headline gb-headline-9e059df5 gb-headline-text"><time class="entry-date published" datetime="2025-06-10T19:59:05+00:00">June 10, 2025</time></div>
+</div></div>
+</div>
+</div></div>
+</div>
+
+</div>
+
+<div class="gb-container gb-container-10a64a88">
+<div class="gb-container gb-container-f546ede0">
+
+<h2 class="gb-headline gb-headline-6be85365 gb-headline-text">Follow Us</h2>
+
+</div>
+
+
+<span class="gb-button gb-button-6bc6819a"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-facebook" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"></path> </svg></span><span class="gb-button-text">Facebook</span></span>
+
+
+
+<span class="gb-button gb-button-aba2c009"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-instagram" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"></path> </svg></span><span class="gb-button-text">Instagram</span></span>
+
+
+
+<span class="gb-button gb-button-af9a822f"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-twitter-x" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"></path> </svg></span><span class="gb-button-text">Twitter X</span></span>
+
+
+
+<span class="gb-button gb-button-8e0eab06"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-youtube" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"></path> </svg></span><span class="gb-button-text">YouTube</span></span>
+
+
+
+<span class="gb-button gb-button-bdf6db94"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-telegram" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"></path> </svg></span><span class="gb-button-text">Telegram</span></span>
+
+</div>	</div>
+</div>
+
+	</div>
+</div>
+
+
+<div class="site-footer footer-bar-active footer-bar-align-right">
+	<div class="gb-container gb-container-8c9f6d82">
+<div class="gb-container gb-container-dda14c6f">
+<div class="gb-grid-wrapper gb-grid-wrapper-a61c9b45">
+<div class="gb-grid-column gb-grid-column-a2023d89"><div class="gb-container gb-container-a2023d89">
+
+<figure class="gb-block-image gb-block-image-b3825931"><img loading="lazy" decoding="async" width="403" height="125" class="gb-image gb-image-b3825931" src="https://techdrivenz.com/wp-content/uploads/2024/03/cropped-Tech-4.png" alt="" title="cropped-Tech-4.png" srcset="https://techdrivenz.com/wp-content/uploads/2024/03/cropped-Tech-4.png 403w, https://techdrivenz.com/wp-content/uploads/2024/03/cropped-Tech-4-300x93.png 300w, https://techdrivenz.com/wp-content/uploads/2024/03/cropped-Tech-4-150x47.png 150w" sizes="auto, (max-width: 403px) 100vw, 403px" /></figure>
+
+
+
+<p class="gb-headline gb-headline-3ea430c1 gb-headline-text">Unlocking the Future and dive deep into the Latest Trends and Innovations in Consumer Technology. Discover the cutting-edge developments driving change across industries, from the latest advancements in smartphones, smart home devices, and wearables to the transformative potential of artificial intelligence, virtual reality, and augmented reality.</p>
+
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-570ab931"><div class="gb-container gb-container-570ab931">
+
+<h2 class="gb-headline gb-headline-344e1515 gb-headline-text">Categories</h2>
+
+
+
+<div class="gb-headline gb-headline-b71967aa"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" fill-rule="evenodd"></path> </svg></span><span class="gb-headline-text"><a href="https://techdrivenz.com/category/smartphones/">Smart Phones</a></span></div>
+
+
+
+<div class="gb-headline gb-headline-a9462c3e"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" fill-rule="evenodd"></path> </svg></span><span class="gb-headline-text"><a href="https://techdrivenz.com/category/generativeai/">Generative AI</a></span></div>
+
+
+
+<div class="gb-headline gb-headline-bd273e43"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" fill-rule="evenodd"></path> </svg></span><span class="gb-headline-text"><a href="https://techdrivenz.com/category/internet/">Internet</a></span></div>
+
+
+
+<div class="gb-headline gb-headline-68ad4cd5"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" fill-rule="evenodd"></path> </svg></span><span class="gb-headline-text">xxxxxxx</span></div>
+
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-2e0da1b4"><div class="gb-container gb-container-2e0da1b4">
+
+<h2 class="gb-headline gb-headline-9c7e94a7 gb-headline-text">Quick Links</h2>
+
+
+
+<div class="gb-headline gb-headline-e4946f6c"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" fill-rule="evenodd"></path> </svg></span><span class="gb-headline-text"><a href="https://techdrivenz.com/about-us/" data-type="link" data-id="https://techdrivenz.com/about-us/">About Us</a></span></div>
+
+
+
+<div class="gb-headline gb-headline-f189184d"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" fill-rule="evenodd"></path> </svg></span><span class="gb-headline-text"><a href="https://techdrivenz.com/contact-us/" data-type="link" data-id="https://techdrivenz.com/contact-us/">Contact Us</a></span></div>
+
+
+
+<div class="gb-headline gb-headline-ae4a8fcb"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" fill-rule="evenodd"></path> </svg></span><span class="gb-headline-text"><a href="https://techdrivenz.com/privacy-policy/" data-type="link" data-id="https://techdrivenz.com/privacy-policy/">Privacy Policy</a></span></div>
+
+
+
+<div class="gb-headline gb-headline-d42b4229"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" fill-rule="evenodd"></path> </svg></span><span class="gb-headline-text"><a href="https://techdrivenz.com/disclaimer/">Disclaimer</a></span></div>
+
+
+
+<div class="gb-headline gb-headline-f72e479c"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-chevron-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" fill-rule="evenodd"></path> </svg></span><span class="gb-headline-text"><a href="https://techdrivenz.com/terms-and-conditions/">Terms and conditions</a></span></div>
+
+</div></div>
+
+<div class="gb-grid-column gb-grid-column-bdf05b11"><div class="gb-container gb-container-bdf05b11">
+
+<h2 class="gb-headline gb-headline-244cf330 gb-headline-text">Follow Us</h2>
+
+
+<div class="gb-container gb-container-dad2d169">
+
+<span class="gb-button gb-button-98395527"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-facebook" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"></path> </svg></span></span>
+
+
+
+<span class="gb-button gb-button-4bf77e9b"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-twitter-x" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"></path> </svg></span></span>
+
+
+
+<span class="gb-button gb-button-8da19ee3"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-instagram" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"></path> </svg></span></span>
+
+
+
+<span class="gb-button gb-button-36c95caa"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-whatsapp" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"></path> </svg></span></span>
+
+
+
+<span class="gb-button gb-button-2a92613a"><span class="gb-icon"><svg viewBox="0 0 16 16" class="bi bi-telegram" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"></path> </svg></span></span>
+
+</div>
+</div></div>
+</div>
+</div>
+
+
+<div class="gb-headline gb-headline-72081d55 gb-headline-text">© 2025 techdrivenz.com • All rights reserved</div>
+
+</div></div>
+
+		<nav id="generate-slideout-menu" class="main-navigation slideout-navigation" itemtype="https://schema.org/SiteNavigationElement" itemscope>
+			<div class="inside-navigation grid-container grid-parent">
+				<div class="main-nav"><ul id="menu-primary-menu-1" class=" slideout-menu"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-457"><a href="https://techdrivenz.com/">Home</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-458"><a href="https://techdrivenz.com/latest-post/">Latest Post</a></li>
+</ul></div>			</div><!-- .inside-navigation -->
+		</nav><!-- #site-navigation -->
+
+					<div class="slideout-overlay">
+									<button class="slideout-exit has-svg-icon">
+						<span class="gp-icon pro-close">
+				<svg viewBox="0 0 512 512" aria-hidden="true" role="img" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1em" height="1em">
+					<path d="M71.029 71.029c9.373-9.372 24.569-9.372 33.942 0L256 222.059l151.029-151.03c9.373-9.372 24.569-9.372 33.942 0 9.372 9.373 9.372 24.569 0 33.942L289.941 256l151.03 151.029c9.372 9.373 9.372 24.569 0 33.942-9.373 9.372-24.569 9.372-33.942 0L256 289.941l-151.029 151.03c-9.373 9.372-24.569 9.372-33.942 0-9.372-9.373-9.372-24.569 0-33.942L222.059 256 71.029 104.971c-9.372-9.373-9.372-24.569 0-33.942z" />
+				</svg>
+			</span>						<span class="screen-reader-text">Close</span>
+					</button>
+							</div>
+			<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/gp-blog-pro/*","/wp-content/themes/generatepress/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script id="generate-a11y">
+!function(){"use strict";if("querySelector"in document&&"addEventListener"in window){var e=document.body;e.addEventListener("pointerdown",(function(){e.classList.add("using-mouse")}),{passive:!0}),e.addEventListener("keydown",(function(){e.classList.remove("using-mouse")}),{passive:!0})}}();
+</script>
+	<div class="gp-modal gp-search-modal" id="gp-search" role="dialog" aria-modal="true" aria-label="Search">
+		<div class="gp-modal__overlay" tabindex="-1" data-gpmodal-close>
+			<div class="gp-modal__container">
+					<form role="search" method="get" class="search-modal-form" action="https://techdrivenz.com/">
+		<label for="search-modal-input" class="screen-reader-text">Search for:</label>
+		<div class="search-modal-fields">
+			<input id="search-modal-input" type="search" class="search-field" placeholder="Search &hellip;" value="" name="s" />
+			<button aria-label="Search"><span class="gp-icon icon-search"><svg viewBox="0 0 512 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"><path fill-rule="evenodd" clip-rule="evenodd" d="M208 48c-88.366 0-160 71.634-160 160s71.634 160 160 160 160-71.634 160-160S296.366 48 208 48zM0 208C0 93.125 93.125 0 208 0s208 93.125 208 208c0 48.741-16.765 93.566-44.843 129.024l133.826 134.018c9.366 9.379 9.355 24.575-.025 33.941-9.379 9.366-24.575 9.355-33.941-.025L337.238 370.987C301.747 399.167 256.839 416 208 416 93.125 416 0 322.875 0 208z" /></svg></span></button>
+		</div>
+			</form>
+				</div>
+		</div>
+	</div>
+	<script>
+    document.getElementById("mobileShareFloatingButton").addEventListener("click", function (e) {
+        var t;
+        e.preventDefault();
+        console.log("Button clicked."); // Add this line for debugging
+        if (navigator.share) {
+            t = document.title;
+            e = window.location.href;
+            navigator.share({ title: t, url: e })
+                .then(() => {
+                    console.log("Share successful for share-button.");
+                })
+                .catch(e => {
+                    console.error("Share failed for share-button:", e);
+                });
+        } else {
+            alert("Share functionality is not supported in this browser.");
+        }
+    });
+</script>
+<!-- Sign in with Google button added by Site Kit -->
+		<style>
+		.googlesitekit-sign-in-with-google__frontend-output-button{max-width:320px}
+		</style>
+		<script src="https://accounts.google.com/gsi/client"></script>
+<script>
+(()=>{async function handleCredentialResponse(response){try{const res=await fetch('https://techdrivenz.com/wp-login.php?action=googlesitekit_auth',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(response)});/* Preserve comment text in case of redirect after login on a page with a Sign in with Google button in the WordPress comments. */ const commentText=document.querySelector('#comment')?.value;const postId=document.querySelectorAll('.googlesitekit-sign-in-with-google__comments-form-button')?.[0]?.className?.match(/googlesitekit-sign-in-with-google__comments-form-button-postid-(\d+)/)?.[1];if(!! commentText?.length){sessionStorage.setItem(`siwg-comment-text-${postId}`,commentText);}location.reload();}catch(error){console.error(error);}}if(typeof google !=='undefined'){google.accounts.id.initialize({client_id:'1013378590778-hfvm5a48ishc2m17kb215vj0dn4ockc4.apps.googleusercontent.com',callback:handleCredentialResponse,library_name:'Site-Kit'});}const defaultButtonOptions={"theme":"outline","text":"signin_with","shape":"rectangular"};document.querySelectorAll('.googlesitekit-sign-in-with-google__frontend-output-button').forEach((siwgButtonDiv)=>{const buttonOptions={shape:siwgButtonDiv.getAttribute('data-googlesitekit-siwg-shape')|| defaultButtonOptions.shape,text:siwgButtonDiv.getAttribute('data-googlesitekit-siwg-text')|| defaultButtonOptions.text,theme:siwgButtonDiv.getAttribute('data-googlesitekit-siwg-theme')|| defaultButtonOptions.theme,};if(typeof google !=='undefined'){google.accounts.id.renderButton(siwgButtonDiv,buttonOptions);}});/* If there is a matching saved comment text in sessionStorage,restore it to the comment field and remove it from sessionStorage. */ const postId=document.body.className.match(/postid-(\d+)/)?.[1];const commentField=document.querySelector('#comment');const commentText=sessionStorage.getItem(`siwg-comment-text-${postId}`);if(commentText?.length && commentField && !! postId){commentField.value=commentText;sessionStorage.removeItem(`siwg-comment-text-${postId}`);}})();
+</script>
+
+<!-- End Sign in with Google button added by Site Kit -->
+<script src="https://techdrivenz.com/wp-content/plugins/gp-premium/menu-plus/functions/js/sticky.min.js?ver=2.4.0" id="generate-sticky-js"></script>
+<script id="generate-offside-js-extra">
+var offSide = {"side":"left"};
+//# sourceURL=generate-offside-js-extra
+</script>
+<script src="https://techdrivenz.com/wp-content/plugins/gp-premium/menu-plus/functions/js/offside.min.js?ver=2.4.0" id="generate-offside-js"></script>
+<script id="eztoc-scroll-scriptjs-js-extra">
+var eztoc_smooth_local = {"scroll_offset":"30","add_request_uri":"","add_self_reference_link":""};
+//# sourceURL=eztoc-scroll-scriptjs-js-extra
+</script>
+<script src="https://techdrivenz.com/wp-content/plugins/easy-table-of-contents/assets/js/smooth_scroll.min.js?ver=2.0.82.2" id="eztoc-scroll-scriptjs-js"></script>
+<script src="https://techdrivenz.com/wp-content/plugins/easy-table-of-contents/vendor/js-cookie/js.cookie.min.js?ver=2.2.1" id="eztoc-js-cookie-js"></script>
+<script src="https://techdrivenz.com/wp-content/plugins/easy-table-of-contents/vendor/sticky-kit/jquery.sticky-kit.min.js?ver=1.9.2" id="eztoc-jquery-sticky-kit-js"></script>
+<script id="eztoc-js-js-extra">
+var ezTOC = {"smooth_scroll":"1","visibility_hide_by_default":"","scroll_offset":"30","fallbackIcon":"\u003Cspan class=\"\"\u003E\u003Cspan class=\"eztoc-hide\" style=\"display:none;\"\u003EToggle\u003C/span\u003E\u003Cspan class=\"ez-toc-icon-toggle-span\"\u003E\u003Csvg style=\"fill: #999;color:#999\" xmlns=\"http://www.w3.org/2000/svg\" class=\"list-377408\" width=\"20px\" height=\"20px\" viewBox=\"0 0 24 24\" fill=\"none\"\u003E\u003Cpath d=\"M6 6H4v2h2V6zm14 0H8v2h12V6zM4 11h2v2H4v-2zm16 0H8v2h12v-2zM4 16h2v2H4v-2zm16 0H8v2h12v-2z\" fill=\"currentColor\"\u003E\u003C/path\u003E\u003C/svg\u003E\u003Csvg style=\"fill: #999;color:#999\" class=\"arrow-unsorted-368013\" xmlns=\"http://www.w3.org/2000/svg\" width=\"10px\" height=\"10px\" viewBox=\"0 0 24 24\" version=\"1.2\" baseProfile=\"tiny\"\u003E\u003Cpath d=\"M18.2 9.3l-6.2-6.3-6.2 6.3c-.2.2-.3.4-.3.7s.1.5.3.7c.2.2.4.3.7.3h11c.3 0 .5-.1.7-.3.2-.2.3-.5.3-.7s-.1-.5-.3-.7zM5.8 14.7l6.2 6.3 6.2-6.3c.2-.2.3-.5.3-.7s-.1-.5-.3-.7c-.2-.2-.4-.3-.7-.3h-11c-.3 0-.5.1-.7.3-.2.2-.3.5-.3.7s.1.5.3.7z\"/\u003E\u003C/svg\u003E\u003C/span\u003E\u003C/span\u003E","chamomile_theme_is_on":""};
+//# sourceURL=eztoc-js-js-extra
+</script>
+<script src="https://techdrivenz.com/wp-content/plugins/easy-table-of-contents/assets/js/front.min.js?ver=2.0.82.2-1774523321" id="eztoc-js-js"></script>
+<script id="generate-menu-js-before">
+var generatepressMenu = {"toggleOpenedSubMenus":true,"openSubMenuLabel":"Open Sub-Menu","closeSubMenuLabel":"Close Sub-Menu"};
+//# sourceURL=generate-menu-js-before
+</script>
+<script src="https://techdrivenz.com/wp-content/themes/generatepress/assets/js/menu.min.js?ver=3.6.1" id="generate-menu-js"></script>
+<script src="https://techdrivenz.com/wp-content/themes/generatepress/assets/dist/modal.js?ver=3.6.1" id="generate-modal-js"></script>
+<script src="https://techdrivenz.com/wp-includes/js/comment-reply.min.js?ver=6.9.4" id="comment-reply-js" async data-wp-strategy="async" fetchpriority="low"></script>
+<script src="https://techdrivenz.com/wp-content/plugins/google-site-kit/dist/assets/js/googlesitekit-consent-mode-bc2e26cfa69fcd4a8261.js" id="googlesitekit-consent-mode-js"></script>
+<script id="wp-consent-api-js-extra">
+var consent_api = {"consent_type":"","waitfor_consent_hook":"","cookie_expiration":"30","cookie_prefix":"wp_consent","services":[]};
+//# sourceURL=wp-consent-api-js-extra
+</script>
+<script src="https://techdrivenz.com/wp-content/plugins/wp-consent-api/assets/js/wp-consent-api.min.js?ver=2.0.1" id="wp-consent-api-js"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"https://techdrivenz.com/wp-includes/js/wp-emoji-release.min.js?ver=6.9.4"}}
+</script>
+<script type="module">
+/*! This file is auto-generated */
+const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(window._wpemojiSettings=a,"wpEmojiSettingsSupports"),s=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const a=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===a[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,a){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!a(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,a){let r;const o=(r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),s=(o.textBaseline="top",o.font="600 32px Arial",{});return e.forEach(e=>{s[e]=t(o,e,n,a)}),s}function r(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}a.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(s),u.toString(),c.toString(),p.toString()].join(",")+"));",a=new Blob([e],{type:"text/javascript"});const r=new Worker(URL.createObjectURL(a),{name:"wpTestEmojiSupports"});return void(r.onmessage=e=>{i(n=e.data),r.terminate(),t(n)})}catch(e){}i(n=f(s,u,c,p))}t(n)}).then(e=>{for(const n in e)a.supports[n]=e[n],a.supports.everything=a.supports.everything&&a.supports[n],"flag"!==n&&(a.supports.everythingExceptFlag=a.supports.everythingExceptFlag&&a.supports[n]);var t;a.supports.everythingExceptFlag=a.supports.everythingExceptFlag&&!a.supports.flag,a.supports.everything||((t=a.source||{}).concatemoji?r(t.concatemoji):t.wpemoji&&t.twemoji&&(r(t.twemoji),r(t.wpemoji)))});
+//# sourceURL=https://techdrivenz.com/wp-includes/js/wp-emoji-loader.min.js
+</script>
+
+</body>
+</html>
+
+
+<!-- Page cached by LiteSpeed Cache 7.8.0.1 on 2026-03-28 08:29:14 -->

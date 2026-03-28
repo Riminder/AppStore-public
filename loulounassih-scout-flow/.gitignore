@@ -1,0 +1,9 @@
+venv/
+.venv/
+mon_cv.pdf
+.env
+__pycache__/
+*/__pycache__/
+*/.venv/
+.idea/
+axel/
