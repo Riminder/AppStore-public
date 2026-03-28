@@ -1,4 +1,4 @@
-# Open HR — AI Sourcing Agent
+# Open HR avec HrFlow.ai
 
 > Intelligent candidate sourcing with auto-generated questionnaires and HrFlow.ai-powered scoring.
 

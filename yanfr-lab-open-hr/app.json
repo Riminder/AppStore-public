@@ -1,6 +1,6 @@
 {
   "$schema": "../../schemas/app.schema.json",
-  "name": "Open HR — AI Sourcing Agent",
+  "name": "Open HR avec HrFlow.ai",
   "description": "AI sourcing agent that auto-generates questionnaires from job descriptions, scores candidates using HrFlow.ai Scoring API with custom weight sliders, and ranks profiles with explainable scores.",
   "credentials": {
     "source_keys": ["c1039b004a836e42427b9c89309ad99cf9b6a73c"],
