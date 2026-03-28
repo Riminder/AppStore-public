@@ -18,6 +18,7 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 | [Scout Flow](./loulounassih-scout-flow/) | Loulou Nassih | A sourcing and candidate ranking app that combines scraped candidates and existing HrFlow sources to build a shortlist for a job. |
 | [FirstRound](./rubber-sheep-first-round/) | Rubber Sheep | An AI-powered HR app that helps recruiters quickly identify top candidates by analyzing the result of their Ai powered interview |
 | [jobNotFound](./team404-jobNotFound/) | team404 | An HRFlow hackathon app that fetches a candidate profile and a job, runs a 5-question AI interview, and produces a final report with both interview scoring and HRFlow profile-job matching. |
+| [Open HR avec HrFlow.ai](./yanfr-lab-open-hr/) | yanfr-lab | AI agent that auto-generates a weighted questionnaire from any job description, scores and ranks candidates using HrFlow.ai Scoring API, and refines results through a natural language feedback loop. |
 
 <!-- APP_TABLE_END -->
 
