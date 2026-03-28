@@ -10,6 +10,7 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 
 | App | Team | Description |
 |-----|------|-------------|
+| [Recruitly](./2synthesize-recruitly/) | 2synthesize | AI recruitment assistant that turns a CV, test scores, and interview notes into a structured hiring recommendation. |
 | [Hiring Dashboard](./stark-hiring-dashboard/) | HrFlow.ai | A lightweight hiring dashboard that displays job listings and candidate profiles from HrFlow.ai APIs. |
 
 <!-- APP_TABLE_END -->
