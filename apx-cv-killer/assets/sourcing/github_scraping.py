@@ -89,41 +89,37 @@ def get_github_user_profile(username, token=None):
 
 
 def get_github_candidate_summary(username, token=None):
-    """Retourne un texte unique utilisable pour gestion de candidature.
+    """Retourne un dictionnaire avec les informations du profil GitHub.
 
     Contenu:
     - informations principales (nom, login, url, bio, etc.)
-    - readme de profil utilisateur (si disponible, dans repo username/username)
+    - readme de profil utilisateur
     - readme des 3 plus gros repos si `hireable`=true, sinon None.
+    - text: le résumé complet en texte
     """
 
     profile = get_github_user_profile(username, token=token)
 
-    summary_lines = []
-    summary_lines.append(f"Nom: {profile.get('name') or 'N/A'}")
-    summary_lines.append(f"Login: {profile.get('login')}")
-    summary_lines.append(f"URL: {profile.get('html_url')}")
-    summary_lines.append(f"Bio: {profile.get('bio') or 'N/A'}")
-    summary_lines.append(f"Entreprise: {profile.get('company') or 'N/A'}")
-    summary_lines.append(f"Localisation: {profile.get('location') or 'N/A'}")
-    summary_lines.append(f"Site Web: {profile.get('blog') or 'N/A'}")
-    summary_lines.append(f"Email: {profile.get('email') or 'N/A'}")
-    summary_lines.append(f"Hireable: {profile.get('hireable')}")
-    summary_lines.append(f"Public repos: {profile.get('public_repos')}")
-    summary_lines.append(f"Followers: {profile.get('followers')}, Following: {profile.get('following')}")
-    summary_lines.append(f"Créé le: {profile.get('created_at')}")
+    profile_info = {}
+    profile_info['name'] = profile.get('name') or 'N/A'
+    profile_info['login'] = profile.get('login')
+    profile_info['url'] = profile.get('html_url')
+    profile_info['bio'] = profile.get('bio') or 'N/A'
+    profile_info['company'] = profile.get('company') or 'N/A'
+    profile_info['location'] = profile.get('location') or 'N/A'
+    profile_info['blog'] = profile.get('blog') or 'N/A'
+    profile_info['email'] = profile.get('email') or 'N/A'
+    profile_info['hireable'] = profile.get('hireable')
+    profile_info['public_repos'] = profile.get('public_repos')
+    profile_info['followers'] = profile.get('followers')
+    profile_info['following'] = profile.get('following')
+    profile_info['created_at'] = profile.get('created_at')
 
-    summary_lines.append("\n=== README UTILISATEUR ===")
     profile_readme = _get_readme_from_repo(username, username, token=token)
-    if profile_readme:
-        summary_lines.append(profile_readme)
-    else:
-        summary_lines.append("Aucun README de profil trouvé (repo de profil non existant ou sans README)")
+    profile_info['profile_readme'] = profile_readme or 'Aucun README de profil trouvé'
 
     if not profile.get("hireable"):
         return None
-
-    summary_lines.append("\n=== README DES 3 PLUS GROS PROJETS ===")
 
     headers = {}
     if token:
@@ -138,38 +134,79 @@ def get_github_candidate_summary(username, token=None):
     repos = repo_resp.json() or []
     top_repos = repos[:3]
 
-    if not top_repos:
+    profile_info['top_repos'] = []
+    for repo in top_repos:
+        repo_name = repo.get("name")
+        readme = _get_readme_from_repo(username, repo_name, token=token)
+        repo_info = {
+            'name': repo_name,
+            'url': repo.get('html_url'),
+            'size': repo.get('size'),
+            'readme': readme or 'Aucun README trouvé pour ce dépôt'
+        }
+        profile_info['top_repos'].append(repo_info)
+
+    # Build the text summary
+    summary_lines = []
+    summary_lines.append(f"Nom: {profile_info['name']}")
+    summary_lines.append(f"Login: {profile_info['login']}")
+    summary_lines.append(f"URL: {profile_info['url']}")
+    summary_lines.append(f"Bio: {profile_info['bio']}")
+    summary_lines.append(f"Entreprise: {profile_info['company']}")
+    summary_lines.append(f"Localisation: {profile_info['location']}")
+    summary_lines.append(f"Site Web: {profile_info['blog']}")
+    summary_lines.append(f"Email: {profile_info['email']}")
+    summary_lines.append(f"Hireable: {profile_info['hireable']}")
+    summary_lines.append(f"Public repos: {profile_info['public_repos']}")
+    summary_lines.append(f"Followers: {profile_info['followers']}, Following: {profile_info['following']}")
+    summary_lines.append(f"Créé le: {profile_info['created_at']}")
+
+    summary_lines.append("\n=== README UTILISATEUR ===")
+    summary_lines.append(profile_info['profile_readme'])
+
+    summary_lines.append("\n=== README DES 3 PLUS GROS PROJETS ===")
+
+    if not profile_info['top_repos']:
         summary_lines.append("Aucun dépôt utilisateur trouvé")
     else:
-        for repo in top_repos:
-            repo_name = repo.get("name")
-            summary_lines.append(f"-- {repo_name} ({repo.get('html_url')}) taille={repo.get('size')}")
-            readme = _get_readme_from_repo(username, repo_name, token=token)
-            if readme:
-                summary_lines.append(readme)
-            else:
-                summary_lines.append("Aucun README trouvé pour ce dépôt")
+        for repo in profile_info['top_repos']:
+            summary_lines.append(f"-- {repo['name']} ({repo['url']}) taille={repo['size']}")
+            summary_lines.append(repo['readme'])
 
-    return "\n".join(summary_lines)
+    profile_info['text'] = "\n".join(summary_lines)
+
+    return profile_info
 
 
 if __name__ == "__main__":
+    import sys
+    from pathlib import Path
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    sys.path.insert(0, str(BASE_DIR))
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cv_killer.settings')
+    from hrflow_service import HrFlowService
 
-    # Exemple d'usage : récupérer exactement 100 profils Python à Paris (si disponibles)
-    # mettre votre token ici (ghp_xxx) pour ne pas être bloqué
+    service = HrFlowService()
+
+    # Récupérer des profils GitHub
     users = get_github_profiles_one_page("location:Paris language:Python", token=GITHUB_TOKEN)
     print(f"Trouvé {len(users)} utilisateurs")
-    for u in users:
-        print(u.get("login"), u.get("html_url"))
 
-    # Exemple d'usage : récupérer un profil utilisateur pour gestion de candidatures
-    if users:
-        for i in range(20):    
-            candidate_login = users[i].get("login")
-            profile = get_github_user_profile(candidate_login, token=GITHUB_TOKEN)
-            print("Profil candidat:", profile)
+    for user in users[:22]:  # Limiter à 5 pour le test
+        login = user.get("login")
+        print(f"Traitement de {login}")
 
-            # Exemple d'usage avancé : résumé synthétique utilisable (texte) pour outils RH
-            summary = get_github_candidate_summary(candidate_login, token=GITHUB_TOKEN)
-            print("\n=== Résumé candidat ===")
-            print(summary)
+        # Obtenir le résumé
+        summary = get_github_candidate_summary(login, token=GITHUB_TOKEN)
+
+        if summary and summary.get('hireable'):
+            print(f"{login} est hireable")
+
+            # Appliquer parse_profile et envoyer à l'API
+            try:
+                result = service.parse_profile(login, summary)
+                print(f"Profil indexé pour {login}: {result}")
+            except Exception as e:
+                print(f"Erreur lors de l'indexation de {login}: {e}")
+        else:
+            print(f"{login} n'est pas hireable ou pas de résumé")

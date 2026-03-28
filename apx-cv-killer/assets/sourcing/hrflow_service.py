@@ -75,35 +75,58 @@ class HrFlowService:
         logger.info(f"Successfully indexed Job: {reference}")
         return response.json()
 
-    def parse_profile(self, reference, file_path=None, raw_text=None, source_url=None):
+    def parse_profile(self, reference, profile_data=None, source_url=None, file_path=None):
         """
         Hackathon Bypass: Since the free tier blocks synchronous AI Document Parsing,
         we index the raw scraped text directly. HrFlow's semantic scoring engine
         will still read the 'text' field to generate accurate match scores!
         """
-        # If no raw text is provided but a file is, try to read it as plain text (fallback)
-        if not raw_text and file_path:
+        if not profile_data and file_path:
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
-                    raw_text = f.read()
+                    profile_data = f.read()
             except:
-                raw_text = "See attached file."
-
+                profile_data = "See attached file."
+        
+        if isinstance(profile_data, dict):
+            text = profile_data.get('text', 'Empty scrape')
+            name = profile_data.get('name', '')
+            first_name = name.split()[0] if name else ''
+            last_name = ' '.join(name.split()[1:]) if len(name.split()) > 1 else ''
+            full_name = name
+            email = profile_data.get('email', '')
+            location_text = profile_data.get('location', '')
+            source_url = source_url or profile_data.get('url')
+        else:
+            text = profile_data or "Empty scrape"
+            # Parse the string
+            lines = text.split('\n')
+            info = {}
+            for line in lines:
+                if ': ' in line:
+                    k, v = line.split(': ', 1)
+                    info[k.lower()] = v.strip()
+            name = info.get('nom', '')
+            first_name = name.split()[0] if name else ''
+            last_name = ' '.join(name.split()[1:]) if len(name.split()) > 1 else ''
+            full_name = name
+            email = info.get('email', '')
+            location_text = info.get('localisation', '')
+            source_url = source_url or info.get('url')
+        
         endpoint = f"{self.base_url}/profile/indexing"
         
-        # We use dummy 'info' to instantly pass the strict database validation, 
-        # but feed the entire OpenClaw scrape into the 'text' field for the Scoring AI.
         payload = {
             "source_key": self.source_key,
             "profile": {
                 "reference": str(reference),
-                "text": raw_text or "Empty scrape",
+                "text": text,
                 "info": {
-                    "first_name": "OpenClaw",       # <-- THE FIX
-                    "last_name": "Candidate",       # <-- THE FIX
-                    "full_name": "OpenClaw Candidate",
-                    "email": "candidate@openclaw.local",
-                    "location": {"text": "Remote", "lat": None, "lng": None},
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "full_name": full_name,
+                    "email": email,
+                    "location": {"text": location_text, "lat": None, "lng": None},
                     "urls": [{"type": "source", "url": source_url}] if source_url else []
                 },
                 "experiences": [],
@@ -160,3 +183,4 @@ class HrFlowService:
         response = requests.post(endpoint, headers=self._get_headers(is_json=True), json=payload)
         self._handle_error(response)
         return response.json()
+    
