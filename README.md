@@ -17,7 +17,6 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 | [JobFinder](./kenfack-jobfinder/) | Franck Ulrich Kenfack | AI-powered job search assistant using HrFlow.ai for CV parsing, profile-job scoring, semantic search, match explanation, and skill extraction — combined with Claude for personalized career coaching and document generation. |
 | [Scout Flow](./loulounassih-scout-flow/) | Loulou Nassih | A sourcing and candidate ranking app that combines scraped candidates and existing HrFlow sources to build a shortlist for a job. |
 | [FirstRound](./rubber-sheep-first-round/) | Rubber Sheep | An AI-powered HR app that helps recruiters quickly identify top candidates by analyzing the result of their Ai powered interview |
-| [Hiring Dashboard](./stark-hiring-dashboard/) | HrFlow.ai | A lightweight hiring dashboard that displays job listings and candidate profiles from HrFlow.ai APIs. |
 
 <!-- APP_TABLE_END -->
 
