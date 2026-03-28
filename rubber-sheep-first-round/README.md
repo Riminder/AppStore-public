@@ -1,48 +1,52 @@
-# Your App Name
+# Backend
 
-> Short tagline describing your app.
+Structure cible pour une API `Python + FastAPI`.
 
-## What it does
+Cette architecture est pensee pour un backend sans base de donnees SQL.
+Le backend sert surtout de couche d'orchestration entre :
+- les endpoints exposes au frontend
+- une ou plusieurs APIs externes
+- une API de LLM
 
-Describe what your app does and the problem it solves.
+## Dossiers
 
-## HrFlow.ai APIs used
+- `app/api/v1/`: endpoints versionnes
+- `app/clients/`: clients techniques vers API externes et API LLM
+- `app/core/`: settings, securite, logging, gestion centrale
+- `app/dependencies/`: dependances FastAPI partagees
+- `app/schemas/`: schemas Pydantic de requete/reponse
+- `app/services/`: logique metier
+- `app/utils/`: helpers transverses
+- `scripts/`: scripts d'outillage projet
+- `tests/unit/`: tests unitaires
+- `tests/integration/`: tests d'integration
 
-- `GET /v1/profiles/searching` — Search candidate profiles
-- Add more endpoints as needed
+## Convention recommandee
 
-## How to run
+Le flux recommande est :
+`api -> dependencies -> services -> clients`
 
-### Prerequisites
+Les schemas de validation restent dans `schemas/` pour separer clairement transport API et logique d'orchestration.
 
-List what needs to be installed (e.g. Node.js 20+, Python 3.11+).
+## Intention d'architecture
 
-### Setup
+- `services/` contient la logique metier et l'enchainement des appels
+- `clients/` encapsule les details HTTP, auth, retries et format des APIs distantes
+- `schemas/` decrit les contrats d'entree/sortie de ton API
+
+Cette separation evite de melanger logique produit et details des fournisseurs externes.
+
+## Run minimal
+
+Depuis `backend/` :
 
 ```bash
-# Install dependencies
-npm install
-
-# Copy environment variables
-cp .env.example .env
-# Then fill in your actual API keys in .env
-
-# Start the app
-npm start
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
 ```
 
-### Environment variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `HRFLOW_API_KEY` | Yes | HrFlow.ai API secret key |
-| `HRFLOW_SOURCE_KEY` | Yes | HrFlow.ai source key |
-
-## Screenshots
-
-![Preview](./assets/preview.png)
-
-## Team
-
-- **Team Lead** — Lead
-- **Developer** — Developer
+API locale :
+- `GET /health`
+- docs Swagger sur `/docs`
