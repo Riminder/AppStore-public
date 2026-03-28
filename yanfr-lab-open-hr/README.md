@@ -54,4 +54,6 @@ uvicorn web_app_fr_v2:app --host 0.0.0.0 --port 8002
 
 ## Team
 
-- **yanfr-lab** — Full-stack development & HrFlow.ai integration
+- **Yan** — Full-stack development & HrFlow.ai integration
+- **Leo** — HrFlow.ai API integration & scoring algorithm
+- **Aike** — Development & HrFlow.ai integration
