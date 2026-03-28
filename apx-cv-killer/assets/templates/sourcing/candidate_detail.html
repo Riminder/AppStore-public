@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ candidate.candidate_name }} - CV Killer{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <a href="{% url 'search_results' candidate.search_session.id %}" class="btn btn-outline-primary mb-4">
+            ← Back to Results
+        </a>
+
+        <div class="row">
+            <!-- Candidate Info -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body p-5">
+                        <h1 class="card-title mb-3">{{ candidate.candidate_name }}</h1>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p class="text-muted">Source Platform</p>
+                                <p class="h5">{{ candidate.source_name }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted">Profile URL</p>
+                                <a href="{{ candidate.source_url }}" target="_blank"
+                                   class="text-decoration-none text-truncate d-block">
+                                    {{ candidate.source_url }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h4 class="mb-3">Profile Data</h4>
+                        <div style="background: #f9fafb; padding: 20px; border-radius: 10px;
+                                    border-left: 4px solid var(--primary-color);">
+                            <pre style="margin: 0; white-space: pre-wrap; word-break: break-word;">{{ candidate.raw_data|safe }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scoring Card -->
+            <div class="col-lg-4">
+                {% if score %}
+                <div class="card mb-4 border-primary" style="border-width: 2px;">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-4">HrFlow Score</h5>
+
+                        <div class="mb-4">
+                            <div style="font-size: 3rem; font-weight: 700; color: var(--primary-color); text-align: center;">
+                                {{ score.hrflow_score|floatformat:1 }}
+                            </div>
+                            <div style="text-align: center; color: #666; font-size: 1.1rem;">
+                                out of 100
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-4">
+                            <p class="text-muted mb-2">Match Percentage</p>
+                            <div class="progress" style="height: 30px; border-radius: 15px;">
+                                <div class="progress-bar"
+                                     style="width: {{ score.match_percentage }}%; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;"
+                                     role="progressbar">
+                                    {{ score.match_percentage|floatformat:0 }}%
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-4">
+                            <p class="text-muted mb-2">Your Feedback</p>
+                            <form method="POST" action="{% url 'update_feedback' candidate.id %}">
+                                {% csrf_token %}
+                                <select name="feedback" class="form-select" onchange="this.form.submit()">
+                                    <option value="pending" {% if score.user_feedback == 'pending' %}selected{% endif %}>
+                                        ⏳ Pending Review
+                                    </option>
+                                    <option value="relevant" {% if score.user_feedback == 'relevant' %}selected{% endif %}>
+                                        ✓ Relevant for Role
+                                    </option>
+                                    <option value="maybe" {% if score.user_feedback == 'maybe' %}selected{% endif %}>
+                                        ~ Maybe / Interesting
+                                    </option>
+                                    <option value="irrelevant" {% if score.user_feedback == 'irrelevant' %}selected{% endif %}>
+                                        ✗ Not Relevant
+                                    </option>
+                                </select>
+                            </form>
+                        </div>
+
+                        <hr>
+
+                        {% if score.skills_match %}
+                        <div class="mb-3">
+                            <p class="text-muted mb-2">Matched Skills</p>
+                            <div>
+                                {% for skill, level in score.skills_match.items %}
+                                <span class="badge" style="background: var(--primary-color); color: white; margin-bottom: 5px;">
+                                    {{ skill }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-4">
+                            <a href="{{ candidate.source_url }}" target="_blank"
+                               class="btn btn-primary w-100">
+                                View Full Profile →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <p>Score data not yet available.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
