@@ -1,0 +1,7 @@
+streamlit
+pandas
+numpy
+plotly
+spacy
+scikit-learn
+pypdf
