@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schemas/app.schema.json",
+  "name": "OpenClaw Job Finding Agent",
+  "description": "AI-powered job matching agent that parses a candidate's CV and uses HrFlow.ai APIs to search, score, and rank the most relevant job opportunities, orchestrated by OpenClaw with a local \n  LLM.",
+  "credentials": {
+    "source_keys": [],
+    "board_keys": [],
+    "algorithm_key": ""
+  },
+  "settings": {
+    "team_name": "7",
+    "theme_color": "#5B5BE1",
+    "custom_filters": [],
+    "filters": []
+  }
+}
