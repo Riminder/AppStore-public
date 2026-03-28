@@ -12,6 +12,8 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 |-----|------|-------------|
 | [Recruitly](./2synthesize-recruitly/) | 2synthesize | AI recruitment assistant that turns a CV, test scores, and interview notes into a structured hiring recommendation. |
 | [Claw4HR — Passive Talent Intelligence](./claw4hr-passive-talent-intelligence/) | Claw4HR | AI-powered recruiter dashboard: describe a role via chat, and the agent scores indexed profiles using HrFlow AI, displays animated matching scores, clickable skills, SWOT analysis, and real-time pipeline feed. |
+| [OpenClaw Job Finding Agent](./clawedin-openclawjobfindagent/) | 7 | AI-powered job matching agent that parses a candidate's CV and uses HrFlow.ai APIs to search, score, and rank the most relevant job opportunities, orchestrated by OpenClaw with a local 
+  LLM. |
 | [HEpiR — HR Evolution](./HEpiR-HREvolution/) | HEpiR | AI-powered recruitment dashboard. Ranks candidates per job using HrFlow scoring combined with an LLM adjustment layer, auto-generates structured synthesis reports, and lets HR attach documents (PDF, DOCX, audio) that feed back into the score. |
 | [JobFinder](./kenfack-jobfinder/) | Franck Ulrich Kenfack | AI-powered job search assistant using HrFlow.ai for CV parsing, profile-job scoring, semantic search, match explanation, and skill extraction — combined with Claude for personalized career coaching and document generation. |
 | [FirstRound](./rubber-sheep-first-round/) | Rubber Sheep | An AI-powered HR app that helps recruiters quickly identify top candidates by analyzing the result of their Ai powered interview |
