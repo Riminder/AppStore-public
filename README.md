@@ -11,6 +11,7 @@ Each app lives in its own folder at the repository root, uses its own stack, and
 | App | Team | Description |
 |-----|------|-------------|
 | [Recruitly](./2synthesize-recruitly/) | 2synthesize | AI recruitment assistant that turns a CV, test scores, and interview notes into a structured hiring recommendation. |
+| [Claw4HR — Passive Talent Intelligence](./claw4hr-passive-talent-intelligence/) | Claw4HR | AI-powered recruiter dashboard: describe a role via chat, and the agent scores indexed profiles using HrFlow AI, displays animated matching scores, clickable skills, SWOT analysis, and real-time pipeline feed. |
 | [Hiring Dashboard](./stark-hiring-dashboard/) | HrFlow.ai | A lightweight hiring dashboard that displays job listings and candidate profiles from HrFlow.ai APIs. |
 
 <!-- APP_TABLE_END -->
