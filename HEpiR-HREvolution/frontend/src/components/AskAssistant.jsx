@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { askQuestions } from '../services/api'
 
 const CATEGORY_COLOR = {
-  Technical:  '#e8eaf6',
-  Behavioral: '#fce4ec',
+  Technique: '#e8eaf6',
+  Comportemental: '#fce4ec',
   Motivation: '#e8f5e9',
 }
 
@@ -61,9 +61,23 @@ const s = {
   }),
 }
 
-const CATEGORY_ORDER = ['Technical', 'Behavioral', 'Motivation']
+const CATEGORY_ORDER = ['Technique', 'Comportemental', 'Motivation']
+
+const CATEGORY_MAP = {
+  'Technical': 'Technique',
+  'Behavioral': 'Comportemental',
+  'Motivation': 'Motivation'
+}
 
 export default function AskAssistant({ job, candidateRef, onClose, inline = false }) {
+  const [closing, setClosing] = useState(false)
+
+  function handleClose() {
+    if (closing) return
+    setClosing(true)
+    setTimeout(onClose, 220)
+  }
+
   const [questions, setQuestions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -76,7 +90,11 @@ export default function AskAssistant({ job, candidateRef, onClose, inline = fals
     askQuestions(job.key, candidateRef.profile_key)
       .then((data) => {
         if (!ignore) {
-          const sorted = (data.questions || []).sort((a, b) => {
+          const mapped = (data.questions || []).map(q => ({
+            ...q,
+            category: CATEGORY_MAP[q.category] || q.category
+          }))
+          const sorted = mapped.sort((a, b) => {
             const idxA = CATEGORY_ORDER.indexOf(a.category)
             const idxB = CATEGORY_ORDER.indexOf(b.category)
             return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB)
@@ -101,17 +119,17 @@ export default function AskAssistant({ job, candidateRef, onClose, inline = fals
       {loading && (
         <div style={{ textAlign: 'center', padding: 40 }}>
           <div className="spinner" />
-          <div style={{ marginTop: 10, fontSize: '.8rem', color: 'var(--text-muted)' }}>Generating tailored questions...</div>
+          <div style={{ marginTop: 10, fontSize: '.8rem', color: 'var(--text-muted)' }}>Génération de questions personnalisées...</div>
         </div>
       )}
-      {error && <div style={{ color: 'var(--score-low)', padding: 20 }}>Error: {error}</div>}
+      {error && <div style={{ color: 'var(--score-low)', padding: 20 }}>Erreur : {error}</div>}
       {!loading && !error && (
         <>
           {questions.length === 0 ? (
-            <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 30 }}>No questions generated.</div>
+            <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 30 }}>Aucune question générée.</div>
           ) : (
             questions.map((q, i) => (
-              <div key={i} style={{ ...s.question, background: CATEGORY_COLOR[q.category] || '#f5f5f5' }}>
+              <div key={i} className="anim-item" style={{ ...s.question, background: CATEGORY_COLOR[q.category] || '#f5f5f5', '--item-index': i }}>
                 <div style={s.categoryBadge(q.category)}>{q.category}</div>
                 <div>{q.question}</div>
               </div>
@@ -127,12 +145,12 @@ export default function AskAssistant({ job, candidateRef, onClose, inline = fals
   const candidateName = `${candidateRef.first_name} ${candidateRef.last_name}`.trim()
 
   return (
-    <div style={s.overlay} onClick={onClose}>
-      <div style={s.modal} onClick={(e) => e.stopPropagation()}>
+    <div style={s.overlay} className={closing ? 'anim-overlay-exit' : 'anim-overlay'} onClick={handleClose}>
+      <div style={s.modal} className={closing ? 'anim-modal-exit' : 'anim-modal'} onClick={(e) => e.stopPropagation()}>
         <div style={s.header}>
           <span style={{ fontSize: 20 }}>💬</span>
-          <div style={s.title}>Interview questions — {candidateName}</div>
-          <button style={s.close} onClick={onClose}>✕</button>
+          <div style={s.title}>Questions d'entretien — {candidateName}</div>
+          <button style={s.close} onClick={handleClose}>✕</button>
         </div>
 
         <div style={s.body}>{questionList}</div>

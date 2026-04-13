@@ -1,7 +1,7 @@
 """AI router — grading, synthesis, and interview question generation."""
 
 import json
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from services import hrflow, llm
 
@@ -23,6 +23,17 @@ class AskRequest(BaseModel):
     profile_key: str
 
 
+@router.post("/transcribe")
+async def transcribe_audio(file: UploadFile = File(...)):
+    """Transcribe an audio file and return the text without saving anything."""
+    try:
+        content = await file.read()
+        text = await llm.transcribe_audio(content, file.filename)
+        return {"text": text}
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e))
+
+
 @router.post("/grade")
 async def grade_candidate(req: GradeRequest):
     """
@@ -33,11 +44,14 @@ async def grade_candidate(req: GradeRequest):
     """
     try:
         job = await hrflow.get_job(req.job_key)
-        profile = await hrflow.get_profile(req.profile_key)
+        profile = await hrflow.get_profile(req.profile_key, use_cache=False)
 
         existing_tag = hrflow.extract_tag(profile, f"job_data_{req.job_key}")
         existing = json.loads(existing_tag) if existing_tag else {}
         extra_docs = hrflow.get_extra_documents(profile, req.job_key)
+
+        existing_synth_raw = hrflow.extract_tag(profile, f"synthesis_{req.job_key}")
+        synthesis_data = json.loads(existing_synth_raw) if existing_synth_raw else None
 
         # Re-use cached base_score — HRFlow algorithmic score only changes when the profile
         # itself changes, not when documents or bonuses are updated.
@@ -62,15 +76,25 @@ async def grade_candidate(req: GradeRequest):
             newly_scored = []
             for doc in to_score:
                 other_docs = [d for d in extra_docs if d["id"] != doc["id"]]
-                score_result = await llm.score_single_document(job, profile, doc, other_docs)
-                newly_scored.append({**doc, "delta": score_result["delta"], "rationale": score_result["rationale"]})
+                current_ai_adj = sum([d.get("delta", 0) for d in already_scored]) + sum([d.get("delta", 0) for d in newly_scored])
+                current_total_score = min(1.0, max(0.0, base_score + current_ai_adj))
+                score_result = await llm.score_single_document(job, profile, doc, other_docs, synthesis_data, current_total_score)
+                newly_scored.append({**doc, "delta": score_result["delta"], "delta_rationale": score_result["rationale"]})
                 print(f"[grade] new doc '{doc.get('filename')}' delta={score_result['delta']} → {score_result['rationale']}", flush=True)
             if newly_scored:
                 await hrflow.update_documents_with_deltas(req.profile_key, req.job_key, newly_scored)
             all_deltas = [d["delta"] for d in already_scored] + [d["delta"] for d in newly_scored]
-            ai_adjustment = round(max(-0.3, min(0.3, sum(all_deltas))), 3)
+            ai_adjustment = round(sum(all_deltas), 3)
+            # Build complete document list in memory — avoids HRFlow indexing latency on re-fetch
+            newly_by_id = {d["id"]: d for d in newly_scored}
+            scored_documents = [
+                {**d, "delta": newly_by_id[d["id"]]["delta"], "delta_rationale": newly_by_id[d["id"]]["delta_rationale"]}
+                if d["id"] in newly_by_id else d
+                for d in extra_docs
+            ]
         else:
             ai_adjustment = 0.0
+            scored_documents = []
         print(f"[grade] total ai_adjustment={ai_adjustment} ({len(already_scored) if extra_docs else 0} cached, {len(newly_scored) if extra_docs else 0} new)", flush=True)
 
         # Persist updated scores — return immediately so the frontend can update the display
@@ -82,10 +106,12 @@ async def grade_candidate(req: GradeRequest):
             "ai_adjustment": ai_adjustment,
             "bonus": existing.get("bonus", 0.0),
         }))
+        hrflow._invalidate_job_candidates(req.job_key)
 
         return {
             "base_score": base_score,
             "ai_adjustment": ai_adjustment,
+            "documents": scored_documents,
         }
     except Exception as e:
         print(f"grade error: {e}", flush=True)
@@ -119,11 +145,38 @@ async def synthesize_candidate(req: SynthesizeRequest):
         final_score = json.loads(raw_tag).get("score", 0.5) if raw_tag else 0.5
         extra_docs = hrflow.get_extra_documents(profile, req.job_key)
 
-        synthesis = await llm.synthesize_candidate(
-            job, profile, tracking or {}, upskilling, final_score, extra_docs
-        )
-        await _patch_tag(req.profile_key, profile, f"synthesis_{req.job_key}", json.dumps(synthesis))
-        return synthesis
+        existing_synth_raw = hrflow.extract_tag(profile, f"synthesis_{req.job_key}")
+        existing_synthesis = None
+        if existing_synth_raw:
+            try:
+                existing_synthesis = json.loads(existing_synth_raw)
+            except Exception:
+                pass
+
+        synthesis = None
+        last_err = None
+        for attempt in range(2):
+            try:
+                synthesis = await llm.synthesize_candidate(
+                    job, profile, tracking or {}, upskilling, final_score, extra_docs, existing_synthesis
+                )
+                if synthesis and isinstance(synthesis, dict) and synthesis.get("summary"):
+                    break
+            except Exception as e:
+                last_err = e
+                print(f"[synthesize] attempt {attempt+1} failed: {e}", flush=True)
+
+        if synthesis and isinstance(synthesis, dict) and synthesis.get("summary"):
+            await _patch_tag(req.profile_key, profile, f"synthesis_{req.job_key}", json.dumps(synthesis))
+            return synthesis
+        
+        # Fallback to existing synthesis if generation failed
+        existing_synth_raw = hrflow.extract_tag(profile, f"synthesis_{req.job_key}")
+        if existing_synth_raw:
+            print("[synthesize] generation failed, falling back to existing synthesis", flush=True)
+            return json.loads(existing_synth_raw)
+            
+        raise last_err or Exception("Synthesis generation failed and no existing synthesis found")
     except Exception as e:
         print(f"synthesize error: {e}", flush=True)
         raise HTTPException(status_code=502, detail=str(e))
