@@ -2,6 +2,8 @@
 
 import io
 import json
+import re 
+from urllib import response
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from pydantic import BaseModel
 from services import hrflow, llm
@@ -31,6 +33,33 @@ class BonusPayload(BaseModel):
 class StagePayload(BaseModel):
     job_key: str
     stage: str
+
+
+@router.post("/{profile_key}/email/generate")
+async def generate_candidate_email(profile_key: str, job_key: str, guidelines: str = None):
+    """Generate a personalized recruitment email using AI."""
+    try:
+        profile = await hrflow.get_profile(profile_key)
+        # Fetch job and synthesis...
+        jobs = await hrflow.list_jobs()
+        job = next((j for j in jobs if j.get("key") == job_key), {"name": "Recruitment Opportunity"})
+        
+        # Fetch synthesis if it exists
+        synthesis = None
+        raw_synth = hrflow.extract_tag(profile, f"synthesis_{job_key}")
+        if raw_synth:
+            try:
+                synthesis = json.loads(raw_synth)
+            except:
+                pass
+
+        # Fetch extra documents
+        extra_docs = hrflow.get_extra_documents(profile, job_key)
+
+        email_content = await llm.generate_email(job, profile, synthesis, guidelines, extra_docs)
+        return email_content
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e))
 
 
 @router.patch("/{profile_key}/stage")
@@ -169,12 +198,15 @@ async def add_document_file(
         
         if ext == "pdf":
             reader = PdfReader(io.BytesIO(content))
-            extracted_text = "\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
+            raw_text = "\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
+            cleaned = re.sub(r'(?<![.!?:;])\s*\n\s*', ' ', raw_text)
+            cleaned = re.sub(r'\s*\n\s*', '\n\n', cleaned)
+            extracted_text = re.sub(r'[ \t]+', ' ', cleaned).strip()
         elif ext in ["docx", "doc"]:
             # Need to install python-docx
             doc = DocxDocument(io.BytesIO(content))
             extracted_text = "\n".join([p.text for p in doc.paragraphs])
-        elif ext in ["mp3", "m4a", "wav", "aac", "ogg", "flac", "aiff"]:
+        elif ext in ["mp3", "m4a", "wav", "aac", "ogg", "flac", "aiff", "webm"]:
             extracted_text = await llm.transcribe_audio(content, filename)
         else:
             # Fallback for plain text files

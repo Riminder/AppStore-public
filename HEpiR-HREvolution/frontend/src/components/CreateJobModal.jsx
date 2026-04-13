@@ -3,9 +3,9 @@ import { createJob } from '../services/api'
 import { registerPendingJob } from '../pages/DashboardPage'
 
 const LEVELS = [
-  { label: 'Beginner',     value: 'beginner' },
-  { label: 'Intermediate', value: 'intermediate' },
-  { label: 'Advanced',     value: 'advanced' },
+  { label: 'Débutant',     value: 'beginner' },
+  { label: 'Intermédiaire', value: 'intermediate' },
+  { label: 'Avancé',     value: 'advanced' },
   { label: 'Expert',       value: 'expert' },
 ]
 
@@ -176,6 +176,14 @@ const s = {
 const EMPTY_FORM = { name: '', summary: '', location: '' }
 
 export default function CreateJobModal({ onClose, onSuccess }) {
+  const [closing, setClosing] = useState(false)
+
+  function handleClose() {
+    if (closing) return
+    setClosing(true)
+    setTimeout(onClose, 220)
+  }
+
   const [form, setForm]     = useState(EMPTY_FORM)
   const [skills, setSkills] = useState([])
   const [newSkill, setNewSkill] = useState({ name: '', level: 'intermediate' })
@@ -232,39 +240,39 @@ export default function CreateJobModal({ onClose, onSuccess }) {
   }
 
   return (
-    <div style={s.overlay} onClick={onClose}>
-      <div style={s.modal} onClick={(e) => e.stopPropagation()}>
+    <div style={s.overlay} className={closing ? 'anim-overlay-exit' : 'anim-overlay'} onClick={handleClose}>
+      <div style={s.modal} className={closing ? 'anim-modal-exit' : 'anim-modal'} onClick={(e) => e.stopPropagation()}>
 
         <div style={s.header}>
-          <div style={s.title}>Create a job</div>
-          <button style={s.close} onClick={onClose}>✕</button>
+          <div style={s.title}>Créer un poste</div>
+          <button style={s.close} onClick={handleClose}>✕</button>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'contents' }}>
           <div style={s.body}>
-            {result && <div style={s.success}>✓ Job created — <strong>{result.name || result.job_key}</strong></div>}
+            {result && <div style={s.success}>✓ Poste créé — <strong>{result.name || result.job_key}</strong></div>}
             {error  && <div style={s.error}>⚠ {error}</div>}
 
             <div style={s.field}>
-              <label style={s.label}>Job title *</label>
-              <input style={s.input} placeholder="e.g. Senior Frontend Engineer"
+              <label style={s.label}>Intitulé du poste *</label>
+              <input style={s.input} placeholder="ex: Développeur Frontend Senior"
                 value={form.name} onChange={setField('name')} required autoFocus />
             </div>
 
             <div style={s.field}>
-              <label style={s.label}>Location</label>
-              <input style={s.input} placeholder="e.g. Paris, France (or Remote)"
+              <label style={s.label}>Emplacement</label>
+              <input style={s.input} placeholder="ex: Paris, France (ou Distanciel)"
                 value={form.location} onChange={setField('location')} />
             </div>
 
             <div style={s.field}>
               <label style={s.label}>Description</label>
-              <textarea style={s.textarea} placeholder="Role summary, responsibilities, requirements…"
+              <textarea style={s.textarea} placeholder="Résumé du rôle, responsabilités, exigences…"
                 value={form.summary} onChange={setField('summary')} />
             </div>
 
             <div style={s.field}>
-              <label style={s.label}>Skills{skills.length > 0 && ` (${skills.length})`}</label>
+              <label style={s.label}>Compétences{skills.length > 0 && ` (${skills.length})`}</label>
               <div style={s.skillsBox}>
                 {/* Token list */}
                 {skills.length > 0 && (
@@ -272,12 +280,12 @@ export default function CreateJobModal({ onClose, onSuccess }) {
                     {skills.map((skill, i) => (
                       <span key={i} style={s.token(skill.level)}>
                         {skill.name}
-                        <span style={s.tokenLevel}>{skill.level}</span>
+                        <span style={s.tokenLevel}>{LEVELS.find(l => l.value === skill.level)?.label || skill.level}</span>
                         <button
                           type="button"
                           style={s.tokenRemove}
                           onClick={() => removeSkill(i)}
-                          title="Remove"
+                          title="Supprimer"
                         >✕</button>
                       </span>
                     ))}
@@ -289,7 +297,7 @@ export default function CreateJobModal({ onClose, onSuccess }) {
                   <input
                     ref={skillInputRef}
                     style={s.addInput}
-                    placeholder="Skill name…"
+                    placeholder="Nom de la compétence…"
                     value={newSkill.name}
                     onChange={(e) => setNewSkill((s) => ({ ...s, name: e.target.value }))}
                     onKeyDown={handleSkillKeyDown}
@@ -304,7 +312,7 @@ export default function CreateJobModal({ onClose, onSuccess }) {
                     ))}
                   </select>
                   <button type="button" style={s.addBtn} onClick={addSkill}>
-                    + Add
+                    + Ajouter
                   </button>
                 </div>
               </div>
@@ -312,10 +320,17 @@ export default function CreateJobModal({ onClose, onSuccess }) {
           </div>
 
           <div style={s.footer}>
-            <button type="button" className="btn-ghost" onClick={onClose}>Cancel</button>
+            <button type="button" className="btn-ghost" onClick={handleClose}>Annuler</button>
             <button type="submit" className="btn-primary"
-              disabled={!form.name.trim() || loading || !!result}>
-              {loading ? '⏳ Creating…' : 'Create job'}
+              disabled={!form.name.trim() || loading || !!result}
+              style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+            >
+              {loading ? (
+                <>
+                  <div className="spinner-white" />
+                  <span>Création…</span>
+                </>
+              ) : 'Créer le poste'}
             </button>
           </div>
         </form>

@@ -69,6 +69,14 @@ const s = {
 }
 
 export default function UploadResumeModal({ job, onClose, onSuccess }) {
+  const [closing, setClosing] = useState(false)
+
+  function handleClose() {
+    if (closing) return
+    setClosing(true)
+    setTimeout(onClose, 220)
+  }
+
   const [file, setFile] = useState(null)
   const [dragging, setDragging] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -102,11 +110,11 @@ export default function UploadResumeModal({ job, onClose, onSuccess }) {
   }
 
   return (
-    <div style={s.overlay} onClick={onClose}>
-      <div style={s.modal} onClick={(e) => e.stopPropagation()}>
+    <div style={s.overlay} className={closing ? 'anim-overlay-exit' : 'anim-overlay'} onClick={handleClose}>
+      <div style={s.modal} className={closing ? 'anim-modal-exit' : 'anim-modal'} onClick={(e) => e.stopPropagation()}>
         <div style={s.header}>
-          <div style={s.title}>Add candidate via resume</div>
-          <button style={s.close} onClick={onClose}>✕</button>
+          <div style={s.title}>Ajouter un candidat via CV</div>
+          <button style={s.close} onClick={handleClose}>✕</button>
         </div>
 
         <div style={s.body}>
@@ -118,8 +126,8 @@ export default function UploadResumeModal({ job, onClose, onSuccess }) {
             onClick={() => inputRef.current?.click()}
           >
             <div style={s.fileIcon}>📄</div>
-            <div style={s.dropText}>Drop a PDF resume here</div>
-            <div style={s.dropSub}>or click to browse</div>
+            <div style={s.dropText}>Déposez un CV PDF ici</div>
+            <div style={s.dropSub}>ou cliquez pour parcourir</div>
             <input
               ref={inputRef}
               type="file"
@@ -144,13 +152,19 @@ export default function UploadResumeModal({ job, onClose, onSuccess }) {
         </div>
 
         <div style={s.footer}>
-          <button className="btn-ghost" onClick={onClose}>Cancel</button>
+          <button className="btn-ghost" onClick={handleClose}>Annuler</button>
           <button
             className="btn-primary"
             onClick={handleUpload}
             disabled={!file || loading}
+            style={{ display: 'flex', alignItems: 'center', gap: 8 }}
           >
-            {loading ? '⏳ Parsing…' : 'Upload & parse'}
+            {loading ? (
+              <>
+                <div className="spinner-white" />
+                <span>Analyse…</span>
+              </>
+            ) : 'Télécharger et analyser'}
           </button>
         </div>
       </div>

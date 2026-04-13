@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { getCandidate, synthesizeCandidate, getStoredSynthesis, updateBonus, getJobStages, updateCandidateStage } from '../services/api'
+import { useState, useEffect, useRef } from 'react'
+import { getCandidate, synthesizeCandidate, getStoredSynthesis, updateBonus, getJobStages, updateCandidateStage, generateEmail, getExtraDocuments } from '../services/api'
 import AskAssistant from './AskAssistant'
 import DocumentsTab from './DocumentsTab'
 
@@ -154,21 +154,57 @@ const s = {
     fontSize: '.8rem',
     outline: 'none',
   },
-  stageSelect: {
-    fontSize: '.8rem',
-    padding: '4px 8px',
-    borderRadius: 'var(--radius)',
+  stageArrow: {
+    background: 'transparent',
     border: '1px solid var(--border)',
-    background: 'var(--surface)',
+    borderRadius: 4,
+    width: 22,
+    height: 22,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     cursor: 'pointer',
-    outline: 'none',
-    maxWidth: 140,
+    fontSize: '1rem',
+    color: 'var(--text)',
+    lineHeight: 1,
+    padding: 0,
+    flexShrink: 0,
   },
 }
 
-export default function CandidatePanel({ candidateRef, job, onClose, onProcessingChange, processingStatus, onBonusSaved, onStageChange }) {
+const STAGE_TRANSLATIONS = {
+  applied: 'Candidature',
+  interview: 'Entretien',
+  screening: 'Présélection',
+  technical_test: 'Test technique',
+  offer: 'Offre envoyée',
+  hired: 'Recruté',
+  rejected: 'Rejeté',
+}
+
+function translateStage(stage, labels = []) {
+  if (!stage) return 'Inconnu'
+  // 1. Check local manual translations first (builtin stages)
+  if (STAGE_TRANSLATIONS[stage]) return STAGE_TRANSLATIONS[stage]
+  // 2. Then check the labels from the server (for custom stages)
+  const found = labels.find(s => s.key === stage)
+  if (found) return found.label
+  // 3. Fallback for custom keys without labels
+  if (stage.startsWith('custom_')) return stage.slice(7).replace(/_/g, ' ')
+  return stage.replace(/_/g, ' ')
+}
+
+export default function CandidatePanel({ candidateRef, job, onClose, onProcessingChange, onScoreReady, onSynthesisReady, processingStatus, onBonusSaved, onStageChange }) {
+  const [closing, setClosing] = useState(false)
+
+  function handleClose() {
+    if (closing) return
+    setClosing(true)
+    setTimeout(onClose, 280)
+  }
+
   const [profile, setProfile] = useState(null)
-  const [synthesis, setSynthesis] = useState(null)
+  const [synthesis, setSynthesis] = useState(candidateRef?.synthesis || null)
   const [activeTab, setActiveTab] = useState('overview')
   const [loadingProfile, setLoadingProfile] = useState(true)
   const [loadingSynth, setLoadingSynth] = useState(false)
@@ -179,23 +215,55 @@ export default function CandidatePanel({ candidateRef, job, onClose, onProcessin
   const [stages, setStages] = useState([])
   const [currentStage, setCurrentStage] = useState(candidateRef?.stage || 'applied')
   const [stageUpdating, setStageUpdating] = useState(false)
+  const [stageSaved, setStageSaved] = useState(false)
+  const [stageError, setStageError] = useState(false)
+  const committedStageRef = useRef(candidateRef?.stage || 'applied')
+  const stageDebounceRef = useRef(null)
+  const stageGenRef = useRef(0)
+  const [docsRefreshKey, setDocsRefreshKey] = useState(0)
+
+  // Use a ref to track the current profile key to detect changes without full state clear
+  const prevProfileKeyRef = useRef(candidateRef?.profile_key)
 
   useEffect(() => {
     if (!candidateRef || !job) return
-    setLoadingProfile(true)
-    setLoadingSynth(true)
-    setProfile(null)
-    setSynthesis(null)
-    setLocalScores(null)
+    const isNewProfile = prevProfileKeyRef.current !== candidateRef.profile_key
+    prevProfileKeyRef.current = candidateRef.profile_key
+
+    if (isNewProfile) {
+      setLoadingProfile(true)
+      setLoadingSynth(true)
+      setProfile(null)
+      setSynthesis(candidateRef.synthesis || null)
+      setLocalScores(null)
+      setActiveTab('overview')
+    } else {
+      // Profile is same, but candidateRef might have been updated (e.g. from synthesis or grading)
+      if (candidateRef.synthesis && JSON.stringify(candidateRef.synthesis) !== JSON.stringify(synthesis)) {
+        setSynthesis(candidateRef.synthesis)
+        setLoadingSynth(false)
+      }
+    }
+
+    // Clear local loading if we're now in "Updating profile" or finished
+    if (processingStatus && processingStatus !== 'Generating synthesis…' && loadingSynth) {
+      setLoadingSynth(false)
+    }
+
     const b = Math.round((candidateRef.bonus || 0) * 100)
     setBonus(b)
     setSavedBonus(b)
     setCurrentStage(candidateRef.stage || 'applied')
+    committedStageRef.current = candidateRef.stage || 'applied'
+    if (stageDebounceRef.current) clearTimeout(stageDebounceRef.current)
+    stageGenRef.current = 0
 
-    getCandidate(candidateRef.profile_key)
-      .then(p => {
+    Promise.all([
+      getCandidate(candidateRef.profile_key),
+      candidateRef.synthesis ? Promise.resolve(candidateRef.synthesis) : getStoredSynthesis(job.key, candidateRef.profile_key),
+    ]).then(async ([p, storedSynthesis]) => {
         setProfile(p)
-        // If candidateRef was missing score/bonus (e.g. newly added), try to get from tags
+        // If candidateRef was missing bonus (e.g. newly added), try to get from tags
         const scoreTag = (p.tags || []).find(t => t.name === `job_data_${job.key}`)
         if (scoreTag) {
           try {
@@ -207,26 +275,51 @@ export default function CandidatePanel({ candidateRef, job, onClose, onProcessin
             }
           } catch (e) {}
         }
-      })
-      .catch(console.error)
-      .finally(() => setLoadingProfile(false))
 
-    getStoredSynthesis(job.key, candidateRef.profile_key)
-      .then(async (data) => {
-        if (data) {
-          setSynthesis(data)
+        if (storedSynthesis) {
+          setSynthesis(storedSynthesis)
+          setLoadingSynth(false)
+          if (!candidateRef.synthesis) onSynthesisReady?.(storedSynthesis)
+        } else if (scoreTag) {
+          // Already graded but synthesis missing. 
+          // Check if synthesis is already in flight (from another panel session)
+          if (processingStatus === 'Génération de la synthèse…') {
+            setLoadingSynth(true)
+            return
+          }
+
+          onProcessingChange?.(candidateRef.profile_key, 'Génération de la synthèse…')
+          setLoadingSynth(true)
+          try {
+            const generated = await synthesizeCandidate(job.key, candidateRef.profile_key)
+            if (generated) {
+              setSynthesis(generated)
+              onSynthesisReady?.(generated)
+            }
+          } catch (e) {
+            console.error(e)
+          } finally {
+            setLoadingSynth(false)
+            onProcessingChange?.(candidateRef.profile_key, 'Mise à jour du profil…')
+          }
         } else {
-          const generated = await synthesizeCandidate(job.key, candidateRef.profile_key)
-          if (generated) setSynthesis(generated)
+          // Not yet graded: synthesis will be generated via onGraded after the first grade run
+          setLoadingSynth(false)
         }
       })
       .catch(console.error)
-      .finally(() => setLoadingSynth(false))
+      .finally(() => { 
+        setLoadingProfile(false)
+        // Only clear loadingSynth if we're not waiting for an external synthesis
+        if (processingStatus !== 'Generating synthesis…') {
+          setLoadingSynth(false)
+        }
+      })
     
     getJobStages(job.key)
       .then(data => setStages(data.stages))
       .catch(console.error)
-  }, [candidateRef?.profile_key, job?.key])
+  }, [candidateRef, job?.key])
 
   const handleBonusSave = async () => {
     if (!job || !candidateRef) return
@@ -242,18 +335,34 @@ export default function CandidatePanel({ candidateRef, job, onClose, onProcessin
     }
   }
 
-  const handleStageChange = async (newStage) => {
+  const handleStageChange = (newStage) => {
     if (!job || !candidateRef) return
-    setStageUpdating(true)
-    try {
-      await updateCandidateStage(candidateRef.profile_key, job.key, newStage)
-      setCurrentStage(newStage)
-      onStageChange?.(candidateRef.profile_key, newStage)
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setStageUpdating(false)
-    }
+    setCurrentStage(newStage)
+    setStageSaved(false)
+    setStageError(false)
+
+    if (stageDebounceRef.current) clearTimeout(stageDebounceRef.current)
+    const gen = ++stageGenRef.current
+
+    stageDebounceRef.current = setTimeout(async () => {
+      setStageUpdating(true)
+      try {
+        await updateCandidateStage(candidateRef.profile_key, job.key, newStage)
+        if (gen !== stageGenRef.current) return
+        committedStageRef.current = newStage
+        onStageChange?.(candidateRef.profile_key, newStage)
+        setStageSaved(true)
+        setTimeout(() => setStageSaved(false), 1400)
+      } catch (e) {
+        if (gen !== stageGenRef.current) return
+        console.error(e)
+        setCurrentStage(committedStageRef.current)
+        setStageError(true)
+        setTimeout(() => setStageError(false), 2000)
+      } finally {
+        if (gen === stageGenRef.current) setStageUpdating(false)
+      }
+    }, 400)
   }
 
   if (!candidateRef) return null
@@ -279,11 +388,13 @@ export default function CandidatePanel({ candidateRef, job, onClose, onProcessin
     : null
 
   const currentStageIdx = stages.findIndex(st => st.key === currentStage)
+  const navStages = stages.filter(st => st.key !== 'rejected')
+  const navIdx = navStages.findIndex(st => st.key === currentStage)
 
   return (
     <>
-      <div style={s.overlay} onClick={onClose}>
-        <div style={s.drawer} onClick={(e) => e.stopPropagation()}>
+      <div style={s.overlay} className={closing ? 'anim-overlay-exit' : 'anim-overlay'} onClick={handleClose}>
+        <div style={s.drawer} className={closing ? 'anim-drawer-exit' : 'anim-drawer'} onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div style={s.header}>
             <div style={s.avatar}>
@@ -295,60 +406,146 @@ export default function CandidatePanel({ candidateRef, job, onClose, onProcessin
               <div style={s.name}>{fullName || candidateRef.profile_key}</div>
               <div style={s.email}>{info.email || candidateRef.email || ''}</div>
               <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span className={`score-badge ${scoreBadgeClass(totalScore)}`}>
-                  {totalScore !== null ? `${Math.round(totalScore * 100)}%` : 'Not scored'}
-                </span>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span className={`score-badge ${scoreBadgeClass(totalScore)}`}>
+                    {totalScore !== null ? `${Math.round(totalScore * 100)}%` : 'Non évalué'}
+                  </span>
+                </div>
 
-                <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: '.7rem', color: 'var(--text-muted)' }}>Stage:</span>
-                  <select
-                    style={s.stageSelect}
-                    value={currentStage}
-                    onChange={(e) => handleStageChange(e.target.value)}
-                    disabled={stageUpdating}
-                  >
-                    {stages.map(st => (
-                      <option key={st.key} value={st.key}>{st.label}</option>
-                    ))}
-                    {currentStageIdx === -1 && <option value={currentStage}>Unknown Stage</option>}
-                  </select>
+                <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <button
+                    style={{ ...s.stageArrow, opacity: (navIdx <= 0 || currentStage === 'rejected') ? 0.35 : 1 }}
+                    disabled={navIdx <= 0 || currentStage === 'rejected'}
+                    onClick={() => navIdx > 0 && handleStageChange(navStages[navIdx - 1].key)}
+                  >‹</button>
+                  <span style={{ fontSize: '.8rem', fontWeight: 500, color: currentStage === 'rejected' ? '#ef4444' : 'var(--text)', minWidth: 72, textAlign: 'center' }}>
+                    {translateStage(currentStage, stages)}
+                  </span>
+                  <button
+                    style={{ ...s.stageArrow, opacity: (navIdx >= navStages.length - 1 || currentStage === 'rejected') ? 0.35 : 1 }}
+                    disabled={navIdx >= navStages.length - 1 || currentStage === 'rejected'}
+                    onClick={() => navIdx < navStages.length - 1 && handleStageChange(navStages[navIdx + 1].key)}
+                  >›</button>
+                  <div style={{ width: 1, height: 16, background: 'var(--border)', margin: '0 2px' }} />
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 5, cursor: 'pointer' }}>
+                    <span style={{ fontSize: '.7rem', color: currentStage === 'rejected' ? '#ef4444' : 'var(--text-muted)' }}>Rejeter</span>
+                    <span
+                      role="switch"
+                      aria-checked={currentStage === 'rejected'}
+                      style={{
+                        position: 'relative',
+                        display: 'inline-block',
+                        width: 28,
+                        height: 16,
+                        borderRadius: 99,
+                        background: currentStage === 'rejected' ? '#ef4444' : '#d1d5db',
+                        transition: 'background 200ms',
+                        cursor: 'pointer',
+                        flexShrink: 0,
+                      }}
+                      onClick={() => handleStageChange(currentStage === 'rejected' ? 'applied' : 'rejected')}
+                    >
+                      <span style={{
+                        position: 'absolute',
+                        top: 2,
+                        left: currentStage === 'rejected' ? 14 : 2,
+                        width: 12,
+                        height: 12,
+                        borderRadius: '50%',
+                        background: '#fff',
+                        transition: 'left 200ms',
+                        boxShadow: '0 1px 2px rgba(0,0,0,.2)',
+                      }} />
+                    </span>
+                  </label>
+                  <div style={{ width: 16, height: 16, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {stageUpdating && <div className="spinner" style={{ width: 13, height: 13, margin: 0 }} />}
+                    {stageSaved && !stageUpdating && <span key={currentStage} className="anim-confirm" style={{ fontSize: '.8rem', color: 'var(--score-high)', fontWeight: 700 }}>✓</span>}
+                    {stageError && !stageUpdating && <span style={{ fontSize: '.8rem', color: '#ef4444', fontWeight: 700 }}>✕</span>}
+                  </div>
                 </div>
               </div>
             </div>
-            <button style={s.closeBtn} onClick={onClose}>✕</button>
+            <button style={s.closeBtn} onClick={handleClose}>✕</button>
           </div>
 
-          {/* Pipeline progress */}
-          <PipelineProgress stages={stages} currentIdx={currentStageIdx} />
+          {/* Pipeline progress — always rendered to reserve space, keyed to candidate */}
+          <PipelineProgress
+            key={candidateRef?.profile_key + '-pipeline'}
+            stages={stages}
+            currentIdx={currentStageIdx}
+            onStageChange={handleStageChange}
+          />
 
-          {/* Processing status banner */}
-          {!loadingProfile && (loadingSynth || processingStatus) && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '7px 20px', fontSize: '.8rem', color: 'var(--accent)', background: '#f0f4ff', borderBottom: '1px solid var(--border)', lineHeight: 1 }}>
-              <div className="spinner" style={{ width: 13, height: 13, flexShrink: 0, margin: 0 }} />
-              <span>{loadingSynth ? 'Generating synthesis…' : processingStatus}</span>
-            </div>
-          )}
-
-          {/* Tabs */}
-          <div style={s.tabs}>
-            {['overview', 'synthesis', 'scoring', 'documents', 'resume', 'ask'].map((tab) => (
-              <div key={tab} style={s.tab(activeTab === tab)} onClick={() => setActiveTab(tab)}>
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          {/* Processing and Tabs area — reserved space for banner to avoid flicker */}
+          <div style={{ position: 'relative' }}>
+            {((loadingSynth && !synthesis) || processingStatus) && (
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 33, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '0 20px', fontSize: '.8rem', color: 'var(--accent)', background: '#f0f4ff', borderBottom: '1px solid var(--border)', lineHeight: 1 }}>
+                <div className="spinner" style={{ width: 13, height: 13, flexShrink: 0, margin: 0 }} />
+                <span>{((loadingSynth && !synthesis) || processingStatus === 'Generating synthesis…') ? 'Génération de la synthèse…' : (processingStatus === 'Updating profile…' ? 'Mise à jour du profil…' : (processingStatus || 'Chargement…'))}</span>
               </div>
-            ))}
+            )}
+
+            {/* Tabs — keyed to candidateRef so animation replays per profile */}
+            <div key={candidateRef?.profile_key + '-tabs'} style={{ ...s.tabs, paddingTop: ((loadingSynth && !synthesis) || processingStatus) ? 33 : 0 }}>
+              {['overview', 'synthesis', 'scoring', 'documents', 'resume', 'email', 'ask'].map((tab, i) => (
+                <div
+                  key={tab}
+                  className="anim-tab"
+                  style={{ ...s.tab(activeTab === tab), '--tab-index': i }}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab === 'overview' ? 'Aperçu' :
+                   tab === 'synthesis' ? 'Synthèse' :
+                   tab === 'scoring' ? 'Évaluation' :
+                   tab === 'documents' ? 'Documents' :
+                   tab === 'resume' ? 'CV' :
+                   tab === 'email' ? 'E-mail' :
+                   tab === 'ask' ? 'Questions' : tab}                </div>
+              ))}
+            </div>
           </div>
 
           {/* Body */}
-          <div style={{ ...s.body, overflow: activeTab === 'resume' || activeTab === 'documents' ? 'hidden' : 'auto', padding: activeTab === 'resume' || activeTab === 'documents' ? 0 : '20px' }}>
+          <div style={{ ...s.body, overflow: activeTab === 'resume' || activeTab === 'documents' ? 'hidden' : 'auto', padding: activeTab === 'resume' || activeTab === 'documents' ? 0 : '20px', ...(activeTab === 'scoring' ? { display: 'flex', flexDirection: 'column' } : {}) }}>
             {loadingProfile ? (
               <div style={{ padding: 40, textAlign: 'center' }}><div className="spinner" /></div>
+            ) : activeTab === 'documents' ? (
+              <DocumentsTab
+                profileKey={candidateRef.profile_key}
+                jobKey={job.key}
+                onGraded={async (result) => {
+                  setLocalScores({ base_score: result.base_score ?? null, ai_adjustment: result.ai_adjustment ?? 0 })
+                  onScoreReady?.({ base_score: result.base_score ?? null, ai_adjustment: result.ai_adjustment ?? 0 })
+                  setDocsRefreshKey(k => k + 1)
+                  onProcessingChange?.(candidateRef.profile_key, 'Génération de la synthèse…')
+                  setLoadingSynth(true)
+                  try {
+                    const synth = await synthesizeCandidate(job.key, candidateRef.profile_key)
+                    if (synth) {
+                      setSynthesis(synth)
+                      onSynthesisReady?.(synth)
+                    }
+                  } catch (e) {
+                    console.error('synthesis failed:', e)
+                  } finally {
+                    setLoadingSynth(false)
+                    onProcessingChange?.(candidateRef.profile_key, 'Mise à jour du profil…')
+                  }
+                }}
+                onProcessingChange={onProcessingChange}
+              />
+            ) : activeTab === 'resume' ? (
+              <ResumeTab profile={profile} />
+            ) : activeTab === 'email' ? (
+              <EmailTab job={job} candidateRef={candidateRef} />
             ) : (
-              <>
+              <div key={activeTab + candidateRef.profile_key} className="anim-content" style={activeTab === 'scoring' ? { flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 } : undefined}>
                 {activeTab === 'overview' && (
                   <OverviewTab profile={profile} />
                 )}
                 {activeTab === 'synthesis' && (
-                  <SynthesisTab synthesis={synthesis} loading={loadingSynth} />
+                  <SynthesisTab synthesis={synthesis} loading={loadingSynth || processingStatus === 'Generating synthesis…'} />
                 )}
                 {activeTab === 'scoring' && (
                   <ScoringTab
@@ -359,36 +556,15 @@ export default function CandidatePanel({ candidateRef, job, onClose, onProcessin
                     setBonus={setBonus}
                     onSaveBonus={handleBonusSave}
                     bonusSaving={bonusSaving}
-                  />
-                )}
-                {activeTab === 'documents' && (
-                  <DocumentsTab
                     profileKey={candidateRef.profile_key}
                     jobKey={job.key}
-                    onGraded={async (result) => {
-                      setLocalScores({ base_score: result.base_score ?? null, ai_adjustment: result.ai_adjustment ?? 0 })
-                      onProcessingChange?.(candidateRef.profile_key, 'Generating synthesis…')
-                      setLoadingSynth(true)
-                      try {
-                        const synth = await synthesizeCandidate(job.key, candidateRef.profile_key)
-                        if (synth) setSynthesis(synth)
-                      } catch (e) {
-                        console.error('synthesis failed:', e)
-                      } finally {
-                        setLoadingSynth(false)
-                        onProcessingChange?.(candidateRef.profile_key, null)
-                      }
-                    }}
-                    onProcessingChange={onProcessingChange}
+                    refreshKey={docsRefreshKey}
                   />
-                )}
-                {activeTab === 'resume' && (
-                  <ResumeTab profile={profile} />
                 )}
                 {activeTab === 'ask' && (
                   <AskAssistant job={job} candidateRef={candidateRef} inline />
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>
@@ -397,42 +573,141 @@ export default function CandidatePanel({ candidateRef, job, onClose, onProcessin
   )
 }
 
-function PipelineProgress({ stages, currentIdx }) {
-  // Built-in stages for progress line (exclude rejected and potentially too many custom stages)
+// How many skeleton nodes to show while stages are loading
+const SKELETON_NODES = 6
+
+function PipelineProgress({ stages, currentIdx, onStageChange }) {
   const displayStages = stages.filter(s => s.key !== 'rejected').slice(0, 8)
-  const effectiveIdx = displayStages.findIndex(s => s.key === (stages[currentIdx]?.key))
+  const effectiveIdx = displayStages.findIndex(s => s.key === stages[currentIdx]?.key)
+  const isLoading = displayStages.length === 0
+
+  // Track fill fires after nodes have had time to pop in
+  const [trackFill, setTrackFill] = useState(false)
+  useEffect(() => {
+    if (isLoading) return
+    const t = setTimeout(() => setTrackFill(true), 200)
+    return () => clearTimeout(t)
+  }, [isLoading])
+
+  const progressPct = displayStages.length > 1
+    ? (Math.max(0, effectiveIdx) / (displayStages.length - 1)) * 100
+    : 0
 
   return (
-    <div style={{ display: 'flex', padding: '10px 20px', gap: 0, background: '#fafafa', borderBottom: '1px solid var(--border)' }}>
-      {displayStages.map((stage, i) => {
-        const isDone = i < effectiveIdx
-        const isActive = i === effectiveIdx
-        const isPastOrActive = i <= effectiveIdx
-        
-        return (
-          <div key={stage.key} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-            {i < displayStages.length - 1 && (
-              <div style={{
-                position: 'absolute', top: 9, left: '50%', width: '100%',
-                height: 2, background: isDone ? 'var(--accent)' : 'var(--border)',
-                zIndex: 0,
-              }} />
-            )}
-            <div style={{
-              width: 20, height: 20, borderRadius: '50%', zIndex: 1,
-              background: isDone ? 'var(--accent)' : (isActive ? 'linear-gradient(90deg, var(--accent) 50%, var(--border) 50%)' : 'var(--border)'),
-              border: isActive ? '2px solid var(--accent)' : 'none',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxSizing: 'border-box'
-            }}>
-              {isDone && <span style={{ color: '#fff', fontSize: 10 }}>✓</span>}
-            </div>
-            <div style={{ fontSize: '.65rem', color: isPastOrActive ? 'var(--accent)' : 'var(--text-muted)', marginTop: 4, fontWeight: isActive ? 700 : 400, textAlign: 'center' }}>
-              {stage.label}
-            </div>
-          </div>
-        )
-      })}
+    <div style={{ padding: '16px 24px 14px', background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ position: 'relative', padding: '0 9px' }}>
+
+        {/* Track background — always visible, gives instant structure */}
+        <div style={{
+          position: 'absolute',
+          top: 9, left: 9, right: 9,
+          height: 2,
+          background: '#e5e7eb',
+          borderRadius: 99,
+          zIndex: 0,
+        }} />
+
+        {/* Track fill — draws after nodes pop in */}
+        {!isLoading && (
+          <div style={{
+            position: 'absolute',
+            top: 9, left: 9,
+            height: 2,
+            background: 'var(--accent)',
+            borderRadius: 99,
+            zIndex: 1,
+            width: trackFill ? `${progressPct}%` : '0%',
+            transition: 'width 700ms var(--ease-out-expo)',
+            maxWidth: 'calc(100% - 18px)',
+          }} />
+        )}
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative', zIndex: 2 }}>
+          {isLoading
+            /* ── Skeleton: gray placeholder circles + label bars ── */
+            ? Array.from({ length: SKELETON_NODES }).map((_, i) => (
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  {/* Circle — same dimensions as real node */}
+                  <div style={{
+                    width: 20, height: 20,
+                    borderRadius: '50%',
+                    background: '#e5e7eb',
+                    border: '2px solid #e5e7eb',
+                    flexShrink: 0,
+                  }} />
+                  {/* Label placeholder — same font metrics as real label so height is identical */}
+                  <div style={{
+                    marginTop: 6,
+                    fontSize: '.6rem',
+                    lineHeight: 1.55,
+                    width: 28,
+                    borderRadius: 4,
+                    background: '#e5e7eb',
+                    overflow: 'hidden',
+                    color: 'transparent',
+                    userSelect: 'none',
+                  }}>&nbsp;</div>
+                </div>
+              ))
+            /* ── Loaded: real nodes animate in with spring stagger ── */
+            : displayStages.map((stage, i) => {
+                const isDone   = i < effectiveIdx
+                const isActive = i === effectiveIdx
+                const isPast   = isDone || isActive
+
+                return (
+                  <div
+                    key={stage.key}
+                    className="pipeline-node"
+                    style={{
+                      '--node-index': i,
+                      display: 'flex', flexDirection: 'column', alignItems: 'center',
+                      cursor: isActive ? 'default' : 'pointer',
+                    }}
+                    onClick={() => !isActive && onStageChange(stage.key)}
+                  >
+                    <div style={{
+                      width: 20, height: 20,
+                      borderRadius: '50%',
+                      background: isPast ? 'var(--accent)' : '#fff',
+                      border: `2px solid ${isPast ? 'var(--accent)' : '#d1d5db'}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0,
+                      boxShadow: isActive ? '0 0 0 4px rgba(18, 100, 163, 0.15)' : 'none',
+                      transition: 'box-shadow 400ms var(--ease-out-expo)',
+                    }}>
+                      {isDone && (
+                        <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+                          <path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" strokeWidth="1.6"
+                            strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                      {isActive && (
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff' }} />
+                      )}
+                    </div>
+
+                    <div style={{
+                      marginTop: 6,
+                      fontSize: '.6rem',
+                      fontWeight: isActive ? 600 : 400,
+                      color: isPast ? 'var(--accent)' : '#9ca3af',
+                      textAlign: 'center',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      maxWidth: 60,
+                      letterSpacing: isActive ? '.01em' : '0',
+                      transition: 'color 300ms ease',
+                    }}>
+                      {translateStage(stage.key, stages)}
+                    </div>
+                  </div>
+                )
+              })
+          }
+        </div>
+      </div>
     </div>
   )
 }
@@ -444,10 +719,12 @@ function OverviewTab({ profile }) {
 
   return (
     <>
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Skills</div>
+      <div className="anim-item" style={{ marginBottom: 20, '--item-index': 0 }}>
+        <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>
+          Compétence{skills.length > 1 ? 's' : ''} {skills.length > 0 && `(${skills.length})`}
+        </div>
         {skills.length === 0 ? (
-          <div style={{ color: 'var(--text-muted)', fontSize: '.8rem' }}>No skills found</div>
+          <div style={{ color: 'var(--text-muted)', fontSize: '.8rem' }}>Aucune compétence trouvée</div>
         ) : (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {skills.map((sk, i) => (
@@ -461,9 +738,11 @@ function OverviewTab({ profile }) {
 
       {experiences.length > 0 && (
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Experience</div>
+          <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>
+            Expérience{experiences.length > 1 ? 's' : ''}
+          </div>
           {experiences.map((exp, i) => (
-            <div key={i} style={{ padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', marginBottom: 8 }}>
+            <div key={i} className="anim-item" style={{ padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', marginBottom: 8, '--item-index': i + 1 }}>
               <div style={{ fontWeight: 600, fontSize: '.875rem' }}>{exp.title}</div>
               <div style={{ fontSize: '.8rem', color: 'var(--text-muted)' }}>{exp.company?.name} {exp.date_start ? `· ${exp.date_start?.slice(0,4)}` : ''}</div>
               {exp.description && <div style={{ fontSize: '.8rem', marginTop: 4, color: 'var(--text)' }}>{exp.description?.slice(0, 200)}{exp.description?.length > 200 ? '…' : ''}</div>}
@@ -474,9 +753,11 @@ function OverviewTab({ profile }) {
 
       {educations.length > 0 && (
         <div>
-          <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Education</div>
+          <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>
+            Formation{educations.length > 1 ? 's' : ''}
+          </div>
           {educations.map((edu, i) => (
-            <div key={i} style={{ padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', marginBottom: 8 }}>
+            <div key={i} className="anim-item" style={{ padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', marginBottom: 8, '--item-index': experiences.length + i + 1 }}>
               <div style={{ fontWeight: 600, fontSize: '.875rem' }}>{edu.title}</div>
               <div style={{ fontSize: '.8rem', color: 'var(--text-muted)' }}>{edu.school?.name} {edu.date_start ? `· ${edu.date_start?.slice(0,4)}` : ''}</div>
             </div>
@@ -491,27 +772,29 @@ function SynthesisTab({ synthesis, loading }) {
   if (loading) return <div style={{ textAlign: 'center', padding: 40 }}><div className="spinner" /></div>
   if (!synthesis) return (
     <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 40 }}>
-      AI synthesis will appear here once generated.
+      La synthèse IA apparaîtra ici une fois générée.
     </div>
   )
   return (
     <>
       {synthesis.summary && (
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Summary</div>
+        <div className="anim-item" style={{ marginBottom: 20, '--item-index': 0 }}>
+          <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Résumé</div>
           <div style={{ lineHeight: 1.6, color: 'var(--text)', padding: '12px 14px', background: 'var(--bg)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
             {synthesis.summary}
           </div>
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
-        <ChipSection title="Strengths" items={synthesis.strengths} color="#d4edda" />
-        <ChipSection title="Weaknesses" items={synthesis.weaknesses} color="#f8d7da" />
+      <div className="anim-item" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20, '--item-index': 1 }}>
+        <ChipSection title="Points forts" items={synthesis.strengths} color="#d4edda" />
+        <ChipSection title="Points faibles" items={synthesis.weaknesses} color="#f8d7da" />
       </div>
 
       {synthesis.upskilling?.length > 0 && (
-        <ChipSection title="Upskilling recommendations" items={synthesis.upskilling} color="#fff3cd" />
+        <div className="anim-item" style={{ '--item-index': 2 }}>
+          <ChipSection title="Recommandations de montée en compétences" items={synthesis.upskilling} color="#fff3cd" />
+        </div>
       )}
     </>
   )
@@ -524,7 +807,7 @@ function ChipSection({ title, items = [], color }) {
       <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>{title}</div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
         {items.map((item, i) => (
-          <span key={i} style={{ fontSize: '.75rem', padding: '.2rem .6rem', borderRadius: 99, background: color, color: '#333', fontWeight: 500 }}>
+          <span key={i} style={{ fontSize: '.75rem', padding: '4px 10px', borderRadius: 8, background: color, color: '#333', fontWeight: 500, lineHeight: 1.4, display: 'inline-block' }}>
             {typeof item === 'object' ? (item.name || item.description || JSON.stringify(item)) : item}
           </span>
         ))}
@@ -533,7 +816,276 @@ function ChipSection({ title, items = [], color }) {
   )
 }
 
-function ScoringTab({ hrflowScore, aiAdjustment, bonus, savedBonus, setBonus, onSaveBonus, bonusSaving }) {
+function formatShortDate(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+}
+
+// ---------------------------------------------------------------------------
+// Score Evolution Graph
+// ---------------------------------------------------------------------------
+
+function ScoreEvolutionGraph({ profileKey, jobKey, baseScore, savedBonus, refreshKey }) {
+  const [docs, setDocs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [animated, setAnimated] = useState(false)
+
+  useEffect(() => {
+    if (!profileKey || !jobKey) return
+    setLoading(true)
+    setAnimated(false)
+    getExtraDocuments(profileKey, jobKey)
+      .then(data => setDocs(data.documents || []))
+      .catch(() => setDocs([]))
+      .finally(() => setLoading(false))
+  }, [profileKey, jobKey, refreshKey])
+
+  useEffect(() => {
+    if (loading) return
+    const t = setTimeout(() => setAnimated(true), 200)
+    return () => clearTimeout(t)
+  }, [loading])
+
+  // Build chronological score timeline from documents
+  const scoredDocs = [...docs]
+    .filter(d => d.delta !== null && d.delta !== undefined)
+    .sort((a, b) => new Date(a.uploaded_at) - new Date(b.uploaded_at))
+
+  const points = []
+  if (baseScore !== null && baseScore !== undefined) {
+    points.push({
+      score: Math.min(1, Math.max(0, baseScore + savedBonus / 100)),
+      label: 'Base',
+      date: null,
+      delta: null,
+      fullLabel: 'Score de base',
+    })
+    let runningAdj = 0
+    for (const doc of scoredDocs) {
+      runningAdj += doc.delta
+      const clampedAdj = Math.min(0.3, Math.max(-0.3, runningAdj))
+      points.push({
+        score: Math.min(1, Math.max(0, baseScore + clampedAdj + savedBonus / 100)),
+        label: (doc.filename || 'Doc').replace(/\.[^.]+$/, '').slice(0, 14),
+        date: doc.uploaded_at,
+        delta: doc.delta,
+        fullLabel: doc.filename,
+      })
+    }
+  }
+
+  // SVG layout constants
+  const H = 300
+  const padL = 50, padR = 50, padT = 40, padB = 40
+  const sidePadding = 60 // Space from the edge of the SVG to the first/last nodes
+  const scrollThreshold = 7
+  const stepW = 120 // Pixels between nodes when scrolling
+
+  // Calculate plot area width
+  const plotW = points.length > scrollThreshold
+    ? (points.length - 1) * stepW
+    : 440 // Fixed width for non-scrolling to keep it centered and tidy
+
+  const W = plotW + padL + padR + (sidePadding * 2)
+  const chartH = H - padT - padB
+
+  // getX calculates the center-aligned X coordinate for each node
+  const getX = (i) => {
+    if (points.length <= 1) return W / 2
+    return padL + sidePadding + i * (plotW / (points.length - 1))
+  }
+  const getY = (score) => padT + chartH * (1 - score)
+
+  const pathD = points.length > 1
+    ? points.map((p, i) => `${i === 0 ? 'M' : 'L'}${getX(i).toFixed(1)},${getY(p.score).toFixed(1)}`).join(' ')
+    : ''
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}>
+        <div className="spinner" style={{ width: 24, height: 24, margin: 0 }} />
+      </div>
+    )
+  }
+
+  if (points.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '32px 0', fontSize: '.875rem', color: 'var(--text-muted)' }}>
+        Évaluez le candidat pour voir l'évolution du score.
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <div style={{
+        flex: 1,
+        overflowX: points.length > scrollThreshold ? 'auto' : 'hidden',
+        overflowY: 'hidden',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--radius-lg)',
+        background: 'var(--surface)',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'flex-start' // Align to top to match sticky container
+      }}>
+        {/* Sticky Y-axis labels overlay — height must match SVG exactly */}
+        <div style={{
+          position: 'sticky',
+          left: 0,
+          width: padL,
+          height: H,
+          marginRight: -padL,
+          zIndex: 10,
+          background: 'var(--surface)',
+          borderRight: '1px dashed var(--border)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: `${padT}px 0 ${padB}px 0`,
+          boxSizing: 'border-box',
+          pointerEvents: 'none',
+          flexShrink: 0
+        }}>
+          {[1, 0.5, 0].map(v => (
+            <div key={v} style={{
+              fontSize: '10px',
+              fontWeight: 700,
+              color: 'var(--text-muted)',
+              textAlign: 'right',
+              paddingRight: 10,
+              fontFamily: 'var(--font-mono)',
+              lineHeight: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end'
+            }}>
+              {v * 100}%
+            </div>
+          ))}
+        </div>
+
+        {/* Scrollable Graph Area */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          justifyContent: points.length > scrollThreshold ? 'flex-start' : 'center',
+          minWidth: 0
+        }}>
+          <svg
+            width={W}
+            height={H}
+            viewBox={`0 0 ${W} ${H}`}
+            style={{
+              display: 'block',
+              overflow: 'visible',
+              flexShrink: 0
+            }}
+            aria-label="Évolution du score au fil du temps"          >
+          {/* Y-axis reference lines at 0 / 50% / 100% across the whole width */}
+          {[0, 0.5, 1].map(v => (
+            <line
+              key={v}
+              x1={0} y1={getY(v).toFixed(1)}
+              x2={W} y2={getY(v).toFixed(1)}
+              stroke="var(--border)" strokeWidth="1"
+              strokeDasharray={v === 0.5 ? '4 3' : undefined}
+            />
+          ))}
+
+          {/* Base Score Anchor Reference Line (Always visible value anchor) */}
+          {points.length > 0 && (
+            <g>
+              <line
+                x1={0} y1={getY(points[0].score).toFixed(1)}
+                x2={W} y2={getY(points[0].score).toFixed(1)}
+                stroke="var(--accent)"
+                strokeWidth="1.5"
+                strokeDasharray="6 4"
+                opacity="0.25"
+              />
+            </g>
+          )}
+
+          {/* Animated connecting path */}
+          {pathD && (
+            <path
+              d={pathD}
+              fill="none"
+              stroke="var(--accent)"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength="1"
+              strokeDasharray="1"
+              strokeDashoffset={animated ? '0' : '1'}
+              style={{ transition: 'stroke-dashoffset 800ms var(--ease-out-expo)' }}
+            />
+          )}
+
+          {/* Nodes */}
+          {points.map((p, i) => {
+            const cx = getX(i)
+            const cy = getY(p.score)
+            const pct = Math.round(p.score * 100)
+            const isBase = p.delta === null
+            const nodeColor = isBase
+              ? 'var(--accent)'
+              : p.delta > 0 ? 'var(--score-high)' : p.delta < 0 ? 'var(--score-low)' : '#9ca3af'
+            const deltaPct = p.delta !== null ? Math.round(p.delta * 100) : null
+
+            return (
+              <g key={i} className="pipeline-node" style={{ '--node-index': i }}>
+                <title>{isBase ? `Score de base : ${pct}%` : `${p.fullLabel} (${formatShortDate(p.date)}) : ${pct}% (${deltaPct >= 0 ? '+' : ''}${deltaPct}%)`}</title>
+
+                {/* Score label above node */}
+                <text
+                  x={cx.toFixed(1)} y={(cy - 18).toFixed(1)}
+                  textAnchor="middle" fontSize="11" fontWeight="800"
+                  fill={nodeColor}
+                  fontFamily="var(--font-mono, monospace)"
+                >{pct}%</text>
+
+                {/* Node circle */}
+                <circle
+                  cx={cx.toFixed(1)} cy={cy.toFixed(1)}
+                  r="12"
+                  fill={nodeColor}
+                  stroke="var(--surface)"
+                  strokeWidth="3"
+                  style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}
+                />
+
+                {/* White inner dot */}
+                <circle cx={cx.toFixed(1)} cy={cy.toFixed(1)} r="4" fill="white" />
+
+                {/* Delta badge */}
+                {!isBase && deltaPct !== null && deltaPct !== 0 && (
+                  <g>
+                    <rect
+                      x={(cx - 18).toFixed(1)} y={(cy + 22).toFixed(1)}
+                      width="36" height="14" rx="7"
+                      fill={p.delta > 0 ? '#e6f4ea' : '#fce8e8'}
+                    />
+                    <text
+                      x={cx.toFixed(1)} y={(cy + 32).toFixed(1)}
+                      textAnchor="middle" fontSize="9" fontWeight="700"
+                      fill={p.delta > 0 ? 'var(--score-high)' : 'var(--score-low)'}
+                    >{deltaPct > 0 ? `+${deltaPct}%` : `${deltaPct}%`}</text>
+                  </g>
+                )}
+              </g>
+            )
+          })}
+        </svg>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ScoringTab({ hrflowScore, aiAdjustment, bonus, savedBonus, setBonus, onSaveBonus, bonusSaving, profileKey, jobKey, refreshKey }) {
   const totalScore = hrflowScore !== null && hrflowScore !== undefined
     ? Math.min(1, Math.max(0, hrflowScore + (aiAdjustment || 0) + savedBonus / 100))
     : null
@@ -545,29 +1097,29 @@ function ScoringTab({ hrflowScore, aiAdjustment, bonus, savedBonus, setBonus, on
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
       <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>Score breakdown</div>
+        <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>Détail du score</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
           {[
-            { label: 'HRFlow Score', value: fmt(hrflowScore) },
-            { label: 'AI Adjustment', value: fmtAdj(aiAdjustment) },
-            { label: 'HR Bonus', value: savedBonus > 0 ? `+${savedBonus}%` : `${savedBonus}%` },
+            { label: 'Score Initial', value: fmt(hrflowScore) },
+            { label: 'Ajustement IA', value: fmtAdj(aiAdjustment) },
+            { label: 'Bonus RH', value: savedBonus > 0 ? `+${savedBonus}%` : `${savedBonus}%` },
             { label: 'Total', value: fmt(totalScore), highlight: true },
-          ].map((item) => (
-            <div key={item.label} style={{ padding: '14px', background: item.highlight ? '#e8f4fd' : 'var(--bg)', border: `1px solid ${item.highlight ? '#b3d9f5' : 'var(--border)'}`, borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
-              <div style={{ fontSize: '.75rem', color: 'var(--text-muted)', marginBottom: 4 }}>{item.label}</div>
+          ].map((item, i) => (
+            <div key={item.label} className="anim-item" style={{ padding: '14px', background: item.highlight ? '#e8f4fd' : 'var(--bg)', border: `1px solid ${item.highlight ? '#b3d9f5' : 'var(--border)'}`, borderRadius: 'var(--radius-lg)', textAlign: 'center', '--item-index': i }}>
+              <div style={{ fontSize: '.75rem', color: 'var(--text-muted)', marginBottom: 4, letterSpacing: '.04em', textTransform: 'uppercase' }}>{item.label}</div>
               <div style={{ fontSize: '1.25rem', fontWeight: 700, color: item.highlight ? 'var(--accent)' : 'var(--text)' }}>{item.value}</div>
             </div>
           ))}
         </div>
       </div>
 
-      <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px 20px' }}>
+      <div className="anim-item" style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px 20px', '--item-index': 4 }}>
         <div style={{ marginBottom: 12 }}>
-          <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 2 }}>HR Bonus adjustment</div>
-          <div style={{ fontSize: '.8rem', color: 'var(--text-muted)' }}>Manually override the candidate score. Value between −100 and +100.</div>
+          <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 2 }}>Ajustement du bonus RH</div>
+          <div style={{ fontSize: '.8rem', color: 'var(--text-muted)' }}>Modifier manuellement le score du candidat. Valeur entre −100 et +100.</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 0, border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', background: 'var(--surface)' }}>
@@ -588,13 +1140,25 @@ function ScoringTab({ hrflowScore, aiAdjustment, bonus, savedBonus, setBonus, on
             >+</button>
           </div>
           <button className="btn-primary" onClick={onSaveBonus} disabled={bonusSaving} style={{ minWidth: 70 }}>
-            {bonusSaving ? 'Saving…' : 'Save'}
+            {bonusSaving ? 'Enregistrement…' : 'Enregistrer'}
           </button>
         </div>
+      </div>
+
+      <div className="anim-item" style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px 20px', marginTop: 16, '--item-index': 5, flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 14, flexShrink: 0 }}>Évolution du score</div>
+        <ScoreEvolutionGraph
+          profileKey={profileKey}
+          jobKey={jobKey}
+          baseScore={hrflowScore}
+          savedBonus={savedBonus}
+          refreshKey={refreshKey}
+        />
       </div>
     </div>
   )
 }
+
 
 function ResumeTab({ profile }) {
   const pdfUrl = profile?.attachments?.[0]?.public_url
@@ -602,7 +1166,7 @@ function ResumeTab({ profile }) {
   if (!pdfUrl) {
     return (
       <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 40 }}>
-        No PDF attachment available for this profile.
+        Aucune pièce jointe PDF disponible pour ce profil.
       </div>
     )
   }
@@ -618,7 +1182,140 @@ function ResumeTab({ profile }) {
         borderRadius: 'var(--radius)',
         display: 'block',
       }}
-      title="Resume PDF"
+      title="CV PDF"
     />
+  )
+}
+
+function EmailTab({ job, candidateRef }) {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [emailData, setEmailData] = useState({ subject: '', body: '', to: candidateRef.email || '' })
+  const [guidelines, setGuidelines] = useState('')
+
+  const handleGenerate = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await generateEmail(job.key, candidateRef.profile_key, guidelines)
+      setEmailData({ ...emailData, subject: data.subject, body: data.body })
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleOpenMailClient = () => {
+    if (!emailData.to || !emailData.subject || !emailData.body) return
+    
+    const subject = encodeURIComponent(emailData.subject)
+    const body = encodeURIComponent(emailData.body)
+    
+    // Direct Gmail Compose URL - this is much more reliable for a "popup" feel
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailData.to}&su=${subject}&body=${body}`
+    
+    // Open in a real small popup window
+    const width = 800
+    const height = 700
+    const left = (window.innerWidth / 2) - (width / 2)
+    const top = (window.innerHeight / 2) - (height / 2)
+    
+    window.open(
+      gmailUrl, 
+      'GmailCompose', 
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
+    )
+  }
+
+  return (
+    <div className="anim-content">
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: '.75rem', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 12 }}>Envoyer un e-mail au candidat</div>
+        
+        <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px 20px', marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, padding: '12px', background: '#f8f9fa', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '.75rem', fontWeight: 600, color: 'var(--accent)', marginBottom: 6 }}>Consignes de génération</div>
+            <textarea
+              value={guidelines}
+              onChange={(e) => setGuidelines(e.target.value)}
+              style={{ width: '100%', minHeight: 60, padding: '8px', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: '.8rem', background: '#fff', resize: 'vertical' }}
+              placeholder="Ex: 'Invitation à un entretien', 'Refus poli', 'Suivi technique'..."
+            />
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: '.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>À :</div>
+            <input
+              type="text"
+              value={emailData.to}
+              onChange={(e) => setEmailData({ ...emailData, to: e.target.value })}
+              style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--surface)', fontSize: '.875rem' }}
+              placeholder="candidat@email.com"
+            />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: '.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>Objet :</div>
+            <input
+              type="text"
+              value={emailData.subject}
+              onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
+              style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--surface)', fontSize: '.875rem' }}
+              placeholder="Objet de l'e-mail"
+            />
+          </div>
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: '.8rem', color: 'var(--text-muted)', marginBottom: 4 }}>Message :</div>
+            <textarea
+              value={emailData.body}
+              onChange={(e) => setEmailData({ ...emailData, body: e.target.value })}
+              style={{ width: '100%', minHeight: 200, padding: '12px', borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--surface)', fontSize: '.875rem', lineHeight: 1.5, resize: 'vertical' }}
+              placeholder="Contenu de l'e-mail..."
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: 12 }}>
+            <button 
+              className="btn-secondary" 
+              onClick={handleGenerate} 
+              disabled={loading}
+              style={{ 
+                flex: 1, 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: '8px',
+                // Petit effet de bordure dégradée pour le côté "IA"
+                border: '1px solid #1264a3',
+                position: 'relative',
+                fontWeight: 600
+              }}
+            >
+              {loading ? (
+                <div className="spinner" style={{ width: 14, height: 14, border: '2px solid #666', borderTopColor: 'transparent' }} />
+              ) : (
+                <>
+                  Générer avec l'IA
+                </>
+              )}
+            </button>
+            <button 
+              className="btn-primary" 
+              onClick={handleOpenMailClient} 
+              disabled={loading || !emailData.subject || !emailData.body || !emailData.to}
+              style={{ flex: 1 }}
+            >
+              Ouvrir dans le client de messagerie
+            </button>
+          </div>
+
+          {error && (
+            <div style={{ marginTop: 12, padding: '8px 12px', background: '#ffebee', color: '#c62828', borderRadius: 'var(--radius)', fontSize: '.8rem', textAlign: 'center' }}>
+              {error}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }

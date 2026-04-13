@@ -6,14 +6,15 @@
 
 HEpiR connects to the HrFlow.ai API to give HR teams a unified view of every job opening and its applicants. Drop a PDF resume into a job, and the system instantly scores the candidate against the role, generates a structured AI synthesis (strengths, weaknesses, upskilling recommendations), and lets HR attach supplementary documents — interview notes, technical test transcripts, audio recordings — that feed directly back into the scoring model.
 
-Key capabilities:
-- **Ranked candidate list** per job, scored by HrFlow's native matching engine combined with an LLM adjustment layer
-- **AI synthesis** — structured summary, strengths, weaknesses, upskilling recommendations, and a hire verdict, auto-generated on upload and refreshable on demand
-- **Extra documents** — attach plain text, PDF, DOCX, or audio files to any candidate; each document is individually scored by the LLM and contributes a delta to the total score
-- **Interview question generator** — tailored questions based on the candidate's profile and attached documents
-- **Recruitment pipeline** — customisable stages per job (Screening, Interview, Technical Test, …) with real-time stage tracking
-- **HR bonus** — manual score adjustment (±) on top of the AI score
-- **Job management** — create jobs, set operational status (Open / On Hold / Closed), manage custom pipeline stages
+### Key capabilities
+
+- **Ranked candidate list** — candidates are automatically scored by HrFlow's native matching engine combined with an LLM adjustment layer.
+- **AI synthesis** — structured summary, strengths, weaknesses, upskilling recommendations, and a hire verdict, auto-generated on upload and refreshable on demand.
+- **Extra documents** — attach plain text, PDF, DOCX, or audio files to any candidate; each document is individually scored by the LLM and contributes to the total score.
+- **🎙️ Voice Recording** — record interview notes directly in the browser with automatic AI transcription (powered by Gemini 2.0 Flash).
+- **💬 Interview Question Generator** — generate tailored Technical, Behavioral, and Motivation questions based on the candidate's profile and all attached documents.
+- **✉️ AI Email Generation** — draft personalized recruitment emails (interviews, follow-ups, rejections) using candidate context, with direct "Open in Gmail" integration.
+- **Recruitment pipeline** — customisable stages per job (Screening, Interview, Technical Test, …) with real-time stage tracking and manual score adjustments.
 
 ## HrFlow.ai APIs used
 
@@ -28,6 +29,18 @@ Key capabilities:
 | `POST /v1/job/indexing` | Create a new job in the board |
 | `GET /v1/job/searching` | List all jobs in the board |
 | `POST /v1/score/searching` | Compute HrFlow's native matching score between a profile and a job |
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 18, Vite 5, Vanilla CSS |
+| **Backend** | Python 3.12, FastAPI |
+| **AI (Grading/Synthesis)** | OpenRouter (configurable model) |
+| **AI (Transcription)** | Google Gemini 2.0 Flash |
+| **Parsing** | `pypdf`, `python-docx` |
+| **HR Data** | HrFlow.ai API v1 |
+| **Infra** | Docker & Docker Compose |
 
 ## How to run
 
@@ -72,15 +85,17 @@ docker compose up --build
 ```
 frontend/   React 18 + Vite — dashboard UI
 backend/    Python 3.12 + FastAPI — orchestration layer
-            ├── routers/jobs.py         job CRUD + stage pipeline
-            ├── routers/candidates.py   profile, score, documents, file upload
-            ├── routers/ai.py           grading, synthesis, interview questions
+            ├── routers/
+            │   ├── jobs.py         job CRUD + stage pipeline
+            │   ├── candidates.py   profile, email generation, file upload
+            │   ├── ai.py           grading, synthesis, transcription, questions
+            │   └── webhooks.py     incoming email parsing & auto-matching
             └── services/
-                ├── hrflow.py           HrFlow API client
-                └── llm.py              OpenRouter LLM calls
+                ├── hrflow.py       HrFlow API client
+                └── llm.py          OpenRouter LLM calls
 ```
 
-No local database — HrFlow is the single source of truth. Scores, synthesis, and extra documents are stored directly in profile tags and metadata.
+No local database — HrFlow is the single source of truth. Scores, synthesis, and extra documents are stored directly in profile tags and metadata. An in-memory cache layer is used to bridge HrFlow's indexing delay.
 
 ## Team
 
