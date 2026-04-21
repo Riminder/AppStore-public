@@ -15,6 +15,20 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  if (profileKey.length > 200) {
+    return NextResponse.json(
+      { error: "profile_key exceeds maximum length of 200 characters" },
+      { status: 400 },
+    );
+  }
+
+  if (question.length > 2000) {
+    return NextResponse.json(
+      { error: "question exceeds maximum length of 2000 characters" },
+      { status: 400 },
+    );
+  }
+
   const result = await hrflow.askProfile(profileKey, [question], mode);
 
   return NextResponse.json(result, { status: result.code ?? 500 });

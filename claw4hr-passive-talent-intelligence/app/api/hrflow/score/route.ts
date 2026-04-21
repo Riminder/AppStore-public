@@ -6,24 +6,27 @@ export async function GET(req: NextRequest) {
   const ALGORITHM_KEY = process.env.HRFLOW_ALGORITHM_KEY;
   if (!ALGORITHM_KEY) {
     return NextResponse.json(
-      { error: "Scoring non disponible : HRFLOW_ALGORITHM_KEY manquante. Creer un algorithme dans AI Studio." },
+      { error: "Service temporairement indisponible" },
       { status: 503 },
     );
   }
 
   const { searchParams } = req.nextUrl;
   const jobKey = searchParams.get("job_key");
-  const limit = searchParams.get("limit");
-  const page = searchParams.get("page");
+  const rawLimit = searchParams.get("limit");
+  const rawPage = searchParams.get("page");
   const mode = (searchParams.get("mode") as HrFlowMode) || undefined;
 
   if (!jobKey) {
     return NextResponse.json({ error: "Missing job_key parameter" }, { status: 400 });
   }
 
+  const limit = Math.min(100, Math.max(1, parseInt(rawLimit || "30", 10) || 30));
+  const page = Math.max(1, parseInt(rawPage || "1", 10) || 1);
+
   const result = await hrflow.scoreProfiles(jobKey, ALGORITHM_KEY, {
-    limit: limit ? parseInt(limit, 10) : undefined,
-    page: page ? parseInt(page, 10) : undefined,
+    limit,
+    page,
     mode,
   });
 

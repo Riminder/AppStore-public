@@ -1,37 +1,50 @@
 /**
- * In-memory event store for OpenClaw webhook → dashboard communication.
- * Events are stored with a cursor so the dashboard can poll for new ones.
- *
- * This is intentionally simple (in-memory, no persistence) — perfect for a hackathon demo.
- * Events are auto-cleaned after 10 minutes to avoid memory leaks.
+ * In-memory event store for OpenClaw → dashboard communication.
+ * Supports both polling (getEventsSince) and push (subscribe) for SSE.
  */
+
+import type { SourcedProfile } from "@/app/lib/types";
 
 export interface OpenClawEvent {
   id: number;
   timestamp: string;
-  // "chat" → goes to WhatsAppPanel, "feed" → goes to AgentFeed, "action" → triggers pipeline actions
-  channel: "chat" | "feed" | "action";
+  channel: "chat" | "feed" | "action" | "profile";
   payload: {
-    // For chat: "user" | "agent"
+    // chat
     type?: string;
     text?: string;
-    // For feed: action name, detail, status, event type
+    // feed
     action?: string;
     detail?: string;
     status?: "done" | "running" | "error";
     feedType?: "connect" | "parse" | "score" | "source" | "analyze" | "notify";
-    // For action: command to execute (e.g., "fetch_profiles", "send_summary")
+    source?: string; // which connector: "github" | "linkedin" | "reddit" | "internet"
+    // action
     command?: string;
+    // profile (new)
+    profile?: SourcedProfile;
   };
 }
 
 const MAX_EVENTS = 500;
-const TTL_MS = 10 * 60 * 1000; // 10 minutes
+const TTL_MS = 10 * 60 * 1000;
 
 let events: OpenClawEvent[] = [];
 let nextId = 1;
 
-export function pushEvent(channel: OpenClawEvent["channel"], payload: OpenClawEvent["payload"]): OpenClawEvent {
+// SSE subscribers
+type Subscriber = (event: OpenClawEvent) => void;
+const subscribers = new Set<Subscriber>();
+
+export function subscribe(fn: Subscriber): () => void {
+  subscribers.add(fn);
+  return () => subscribers.delete(fn);
+}
+
+export function pushEvent(
+  channel: OpenClawEvent["channel"],
+  payload: OpenClawEvent["payload"],
+): OpenClawEvent {
   cleanup();
   const event: OpenClawEvent = {
     id: nextId++,
@@ -43,6 +56,14 @@ export function pushEvent(channel: OpenClawEvent["channel"], payload: OpenClawEv
   if (events.length > MAX_EVENTS) {
     events = events.slice(-MAX_EVENTS);
   }
+  // Notify SSE subscribers immediately
+  subscribers.forEach((fn) => {
+    try {
+      fn(event);
+    } catch {
+      subscribers.delete(fn);
+    }
+  });
   return event;
 }
 
