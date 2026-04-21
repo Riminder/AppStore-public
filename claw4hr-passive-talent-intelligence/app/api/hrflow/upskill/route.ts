@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   const algorithmKey = process.env.HRFLOW_ALGORITHM_KEY;
   if (!algorithmKey) {
     return NextResponse.json(
-      { error: "Upskilling non disponible : HRFLOW_ALGORITHM_KEY manquante." },
+      { error: "Service temporairement indisponible" },
       { status: 503 },
     );
   }

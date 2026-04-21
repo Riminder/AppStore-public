@@ -25,6 +25,22 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Landing design system — also used by dashboard */
+:root {
+  --coral: #FF6B6B;
+  --coral-dark: #E85555;
+  --coral-deep: #CC4444;
+  --coral-glow: rgba(255, 107, 107, 0.15);
+  --cream: #FFF5F0;
+  --cream-mid: #F5EDE6;
+  --ink: #1a1a2e;
+  --navy: #0B1226;
+  --muted-text: #6b7280;
+  --success: #10b981;
+  --amber: #f59e0b;
+  --rose: #f43f5e;
+}
+
 @theme inline {
   --color-background: var(--bg-deep);
   --color-foreground: var(--text-primary);
@@ -173,4 +189,138 @@ body {
 .glass-hover:hover {
   background: rgba(26, 34, 53, 0.8);
   border-color: var(--border-medium);
+}
+
+/* === LANDING PAGE === */
+
+@keyframes landing-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes landing-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes landing-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes landing-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.landing-fade-up {
+  animation: landing-fade-up 0.6s ease-out both;
+}
+
+.landing-fade-in {
+  animation: landing-fade-in 0.5s ease-out both;
+}
+
+.landing-pulse {
+  animation: landing-pulse 2s ease-in-out infinite;
+}
+
+.landing-float {
+  animation: landing-float 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-fade-up,
+  .landing-fade-in,
+  .landing-pulse,
+  .landing-float {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ─── Loading screen animations ─── */
+
+@keyframes agent-pulse-ring {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.04); }
+}
+
+@keyframes agent-scan-bar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes hub-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes hub-spin-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes profile-pop {
+  0% { opacity: 0; transform: scale(0.7) translateY(8px); }
+  70% { transform: scale(1.05) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes data-stream {
+  0% { opacity: 0; transform: translateX(-12px); }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(12px); }
+}
+
+.animate-agent-pulse-ring { animation: agent-pulse-ring 2s ease-in-out infinite; }
+.animate-hub-spin { animation: hub-spin 8s linear infinite; }
+.animate-hub-spin-reverse { animation: hub-spin-reverse 6s linear infinite; }
+.animate-profile-pop { animation: profile-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-data-stream { animation: data-stream 1.5s ease-in-out infinite; }
+
+/* ─── Dashboard 2.0 animations ─── */
+
+/* Pixel agent walk cycle */
+@keyframes pixel-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Pixel agent run across screen */
+@keyframes agent-run {
+  from { transform: translateX(0); }
+  to { transform: translateX(var(--run-distance, 200px)); }
+}
+
+/* Score ring fill */
+@keyframes ring-fill {
+  from { stroke-dashoffset: var(--ring-total); }
+  to { stroke-dashoffset: var(--ring-offset); }
+}
+
+/* Card stagger reveal */
+@keyframes card-reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pixel-bounce {
+  animation: pixel-bounce 0.4s ease-in-out infinite;
+}
+
+.animate-card-reveal {
+  animation: card-reveal 0.4s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pixel-bounce,
+  .animate-card-reveal,
+  .score-ring-animated {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
 }
