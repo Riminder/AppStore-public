@@ -1,0 +1,17 @@
+{
+  "$schema": "https://github.com/hrflow/AppStore-public/schemas/app.schema.json",
+  "name": "Remi AI",
+  "description": "An HRFlow hackathon app that fetches a candidate profile and a job, runs a 5-question AI interview, and produces a final report with both interview scoring and HRFlow profile-job matching.",
+  "credentials": {
+    "source_keys": [
+      "da13ffd3b3fe72839848d91144b4e39d5cba2819"
+    ],
+    "board_keys": [
+      "c99d70c3a062c2f99ca78fce23b89fb4f53119ef"
+    ]
+  },
+  "settings": {
+    "team_name": "404-job-not-found",
+    "theme_color": "#4F46E5"
+  }
+}
